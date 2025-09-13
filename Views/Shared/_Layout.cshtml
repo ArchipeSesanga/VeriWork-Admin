@@ -6,41 +6,73 @@
     <title>@ViewData["Title"] - VeriWork_Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/VeriWork_Admin.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/VeriWork_Admin.styles.css" asp-append-version="true"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Ubuntu+Condensed&family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
 </head>
 <body>
-<header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VeriWork_Admin</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Priv</a>
-                    </li>
-                </ul>
-            </div>
+<header id="header">
+    <nav class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0">
+        <!-- Brand -->
+        <div>
+            <img src="~/images/logo2.png" alt="VeriWork_Admin Logo" width="50px" height="30px"/>
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">VeriWork</a>
         </div>
+        
+
+        <!-- Search -->
+        <input class="form-control form-control-dark w-25"
+               type="text"
+               placeholder="🔍 Search for an employee"
+               aria-label="Search">
+
+        <!-- Right-side navigation -->
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link btn btn-danger" href="#">Sign out</a>
+            </li>
+        </ul>
     </nav>
 </header>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar vh-100" id="grad">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item pt-3">
+                        <h6 class="text-black">ADMIN PANEL</h6>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i data-feather="home"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i data-feather="file"></i> Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i data-feather="shopping-cart"></i> Products</a></li>
+                </ul>
+
+
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 pb-3 ">
+            @RenderBody()
+        </main>
+    </div>
 </div>
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2025 - VeriWork_Admin - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2025 - VeriWork_Admin -
+        <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
