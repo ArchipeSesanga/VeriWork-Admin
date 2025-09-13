@@ -7,4 +7,8 @@
         <RootNamespace>VeriWork_Admin</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Pages\" />
+    </ItemGroup>
+
 </Project>
