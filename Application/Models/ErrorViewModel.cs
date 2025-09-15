@@ -1,4 +1,4 @@
-namespace VeriWork_Admin.Models;
+namespace VeriWork_Admin.Application.Models;
 
 public class ErrorViewModel
 {

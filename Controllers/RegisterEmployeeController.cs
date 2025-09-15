@@ -15,4 +15,9 @@ public class RegisterEmployeeController : Controller
     {
         return View();
     }
+
+    public IActionResult Register()
+    {
+        throw new NotImplementedException();
+    }
 }

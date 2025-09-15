@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using VeriWork_Admin.Models;
+using VeriWork_Admin.Application.Models;
 
 namespace VeriWork_Admin.Controllers;
 
