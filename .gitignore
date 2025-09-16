@@ -48,3 +48,4 @@ secrets.*
 # OS-specific
 .DS_Store
 Thumbs.db
+Infrastructure/Config/veriwork-database-firebase-adminsdk-fbsvc-dc89adb563.json
