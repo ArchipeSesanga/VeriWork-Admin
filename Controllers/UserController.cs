@@ -24,7 +24,7 @@ public class UserController : Controller
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return RedirectToAction("UnSuccessfulRegistration");
 
         string photoUrl = null;
 
@@ -38,8 +38,17 @@ public class UserController : Controller
 
         return RedirectToAction("Login");
     }
-
     public IActionResult Login()
+    {
+        return View();
+    }
+
+    public IActionResult SuccessfulRegistration()
+    {
+        return View();
+    }
+    
+    public IActionResult UnSuccessfulRegistration()
     {
         return View();
     }
