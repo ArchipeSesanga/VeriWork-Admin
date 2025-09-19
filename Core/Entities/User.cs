@@ -7,6 +7,7 @@ namespace VeriWork_Admin.Core.Entities;
 public class User
 {
     [Key]
+    [FirestoreProperty]
     public string IdNumber { get; set; }  // Unique identifier, e.g. SA ID Number
     
     [FirestoreProperty] 

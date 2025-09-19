@@ -29,12 +29,28 @@ public class UserRepository : IUserRepository
         return snapshot.Documents.FirstOrDefault()?.ConvertTo<User>();
     }
 
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        var users = new List<User>();
+        var snapshot = await _db.Collection("Users").GetSnapshotAsync();
+        foreach (var doc in snapshot.Documents)
+        {
+            if (doc.Exists)
+            {
+                Console.WriteLine($"Doc {doc.Id}: {doc.ToDictionary()}");
+                var user = doc.ConvertTo<User>();
+                users.Add(user);
+            }
+        }
+        return users;
+    }
+
     public Task<User> GetUserByIdAsync(string idNumber)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateUserAsync(User updatedUser)
+    public async Task UpdateUserAsync(User updatedUser)
     {
         throw new NotImplementedException();
     }

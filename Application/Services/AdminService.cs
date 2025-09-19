@@ -54,4 +54,11 @@ public class AdminService
     {
         await _userRepository.UpdateUserAsync(updatedUser);
     }
+    
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        return await _userRepository.GetAllUsersAsync();
+    }
+
+    
 }

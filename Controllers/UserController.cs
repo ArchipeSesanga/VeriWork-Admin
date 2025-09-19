@@ -16,6 +16,12 @@ public class UserController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Dashboard()
+    {
+        var users = await _adminService.GetAllUsersAsync();
+        return View(users);  // pass list to the view
+    }
+    [HttpGet]
     public IActionResult Register()
     {
         return View();
@@ -48,10 +54,14 @@ public class UserController : Controller
 
         return RedirectToAction("Login");
     }
+    
+    
     public IActionResult Login()
     {
         return View();
     }
+    
+    
 
     
     

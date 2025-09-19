@@ -11,6 +11,10 @@ public interface IUserRepository
     ;
 
 
-    Task<User> GetUserByIdAsync(string idNumber);
+   
     Task UpdateUserAsync(User updatedUser);
+
+    Task<List<User>> GetAllUsersAsync();
+    Task<User> GetUserByIdAsync(string idNumber);
+
 }
