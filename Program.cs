@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 //Firestore setup
 string projectId = "veriwork-database";
 string credentialPath = Path.Combine(Directory.GetCurrentDirectory(), "Infrastructure/Config/service-account.json");
-string bucketName = "gs://veriwork-database.firebasestorage.app";
+string bucketName = "veriwork-database.firebasestorage.app";
 
 FirestoreDb db = FirebaseInitializer.Initialize(projectId, credentialPath);
 
@@ -21,7 +21,7 @@ builder.Services.AddControllersWithViews();
 //DI
 builder.Services.AddSingleton(db);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AdminService>();
 builder.Services.AddSingleton(new FirebaseStorageService(projectId, bucketName, credentialPath));
 
 

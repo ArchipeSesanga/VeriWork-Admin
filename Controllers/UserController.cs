@@ -6,12 +6,12 @@ namespace VeriWork_Admin.Controllers;
 
 public class UserController : Controller
 {
-    private readonly UserService _userService;
+    private readonly AdminService _adminService;
     private readonly FirebaseStorageService _storageService;
 
-    public UserController(UserService userService, FirebaseStorageService storageService)
+    public UserController(AdminService adminService, FirebaseStorageService storageService)
     {
-        _userService = userService;
+        _adminService = adminService;
         _storageService = storageService;
     }
 
@@ -24,9 +24,19 @@ public class UserController : Controller
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
         if (!ModelState.IsValid)
-            return RedirectToAction("UnSuccessfulRegistration");
+        {
+            var errors = ModelState
+                .Where(kv => kv.Value.Errors.Count > 0)
+                .SelectMany(kv => kv.Value.Errors.Select(e => $"{kv.Key}: {e.ErrorMessage}"))
+                .ToList();
 
-        string photoUrl = null;
+            foreach (var error in errors)
+                Console.WriteLine(error);
+
+            return View(model);
+        }
+
+        string? photoUrl = null;
 
         if (photo != null && photo.Length > 0)
         {
@@ -34,7 +44,7 @@ public class UserController : Controller
             photoUrl = await _storageService.UploadFileAsync(photo, fileName);
         }
 
-        await _userService.RegisterEmployeeAsync(model, photoUrl);
+        await _adminService.Register(model, photoUrl);
 
         return RedirectToAction("Login");
     }
@@ -43,13 +53,18 @@ public class UserController : Controller
         return View();
     }
 
+    
+    
+    
     public IActionResult SuccessfulRegistration()
     {
+        //testing purpose
         return View();
     }
     
     public IActionResult UnSuccessfulRegistration()
     {
+        //testing purpose
         return View();
     }
 }

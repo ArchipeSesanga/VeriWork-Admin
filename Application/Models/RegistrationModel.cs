@@ -22,6 +22,7 @@ public class RegistrationModel : User
         public string ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "Profile photo is required")]
+        
         public IFormFile Photo { get; set; }
     
     
