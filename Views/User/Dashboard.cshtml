@@ -65,7 +65,9 @@
                                 <span class="badge bg-secondary">N/A</span> @* Status placeholder until implemented *@
                             </td>
                             <td>
-                                <a asp-controller="User" asp-action="Profile" asp-route-id="@user.IdNumber"
+                                <a asp-controller="User" 
+                                   asp-action="EmployeeProfile" 
+                                   asp-route-idNumber="@user.IdNumber"
                                    class="btn btn-sm btn-outline-primary">
                                     View Profile
                                 </a>

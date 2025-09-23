@@ -18,17 +18,20 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
+        //Use: Display dashboard with list of users
         var users = await _adminService.GetAllUsersAsync();
         return View(users);  // pass list to the view
     }
     [HttpGet]
     public IActionResult Register()
     {
+        //Use: Display the registration page
         return View();
     }
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
+        //Use: Register new employee into Firebase database
         if (!ModelState.IsValid)
         {
             var errors = ModelState
@@ -52,9 +55,8 @@ public class UserController : Controller
 
         await _adminService.Register(model, photoUrl);
 
-        return RedirectToAction("Login");
+        return RedirectToAction("SuccessfulRegistration");
     }
-    
     
     public IActionResult Login()
     {
@@ -76,5 +78,16 @@ public class UserController : Controller
     {
         //testing purpose
         return View();
+    }
+
+    public async Task<IActionResult> EmployeeProfile(string idNumber)
+    {
+        if (string.IsNullOrEmpty(idNumber))
+            return BadRequest("ID Number is required");
+        
+        var user = await _adminService.GetProfileAsync(idNumber);
+        if (user == null)
+            return NotFound();
+        return View(user);
     }
 }

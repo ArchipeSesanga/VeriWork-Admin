@@ -1,0 +1,45 @@
+@model VeriWork_Admin.Core.Entities.User
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card p-3 w-75">
+        <div class="d-flex align-items-center">
+            <div class="image">
+                <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" 
+                     class="rounded" width="155" alt="Profile Photo" />
+            </div>
+
+            <div class="mx-3 w-100">
+                <h4 class="mb-0 mt-0">@Model.Name @Model.Surname</h4>
+                <span>@Model.Role</span><br />
+                <span>Employee ID: @Model.IdNumber</span>
+                <div class="button mt-2 d-flex flex-row gap-2">
+                    <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" 
+                       class="btn btn-sm btn-primary w-100">Update/Edit Info</a>
+                    <button class="btn btn-sm btn-primary w-100">Verify Status</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2 -->
+<div class="container mt-5 d-flex justify-content-center gap-2">
+    <div class="card p-3 w-50">
+        <h4>Verification Status</h4>
+        <p class="fw-bold">Current Status: <span class="text-danger">Not Verified</span></p>
+        <p>Expiry Date: Not set yet</p>
+        <button class="btn btn-sm btn-outline-primary w-100">Check Documentation Status</button>
+    </div>
+
+    <div class="card p-3 w-50">
+        <h4>Contact Information</h4>
+        <p>Email: @Model.Email</p>
+        <p>Phone: @Model.Phone</p>
+        <p>Address: @Model.Address</p>
+    </div>
+</div>

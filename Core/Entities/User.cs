@@ -40,4 +40,7 @@ public class User
     
     [FirestoreProperty]
     public string? PasswordHash { get; set; }
+    
+    [FirestoreProperty]
+    public string? PhotoUrl { get; set; }
 }

@@ -45,9 +45,16 @@ public class UserRepository : IUserRepository
         return users;
     }
 
-    public Task<User> GetUserByIdAsync(string idNumber)
+    public async Task<User> GetUserByIdAsync(string idNumber)
     {
-        throw new NotImplementedException();
+       
+        var docRef = _db.Collection("Users").Document(idNumber);
+        var snapshot = await docRef.GetSnapshotAsync();
+        if (snapshot.Exists)
+        {
+            return snapshot.ConvertTo<User>();
+        }
+        return snapshot.Exists ? snapshot.ConvertTo<User>() : null;
     }
 
     public async Task UpdateUserAsync(User updatedUser)

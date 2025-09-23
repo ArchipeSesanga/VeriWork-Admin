@@ -16,6 +16,8 @@ public class AdminService
 
     public async Task Register(RegistrationModel model, string photoUrl, string role = "employee")
     {
+        //Use: Service to register
+        //Only by Admin
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
         var user = new User
@@ -29,6 +31,7 @@ public class AdminService
             PasswordHash = hashedPassword,
             Role = role,
             DepartmentId = role == "employee" ? model.DepartmentId : null,
+            PhotoUrl = photoUrl
             
         };
 
@@ -37,6 +40,8 @@ public class AdminService
 
     public async Task<User?> AuthenticateAsync(string email, string password)
     {
+        //Use: Authenticate Users
+        //auto backend Service
         var user = await _userRepository.GetUserByEmailAsync(email);
 
         if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
@@ -47,16 +52,19 @@ public class AdminService
 
     public async Task<User?> GetProfileAsync(string idNumber)
     {
+        //Use: Fecth User profile by usinfg iDNumber
         return await _userRepository.GetUserByIdAsync(idNumber);
     }
 
     public async Task UpdateProfileAsync(User updatedUser)
     {
+        //use: Update Employee profile
         await _userRepository.UpdateUserAsync(updatedUser);
     }
     
     public async Task<List<User>> GetAllUsersAsync()
     {
+        //Use: get a list of all Employee present in the firebase database
         return await _userRepository.GetAllUsersAsync();
     }
 
