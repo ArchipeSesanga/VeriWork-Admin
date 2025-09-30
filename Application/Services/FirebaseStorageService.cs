@@ -19,6 +19,6 @@ public class FirebaseStorageService
         using var stream = file.OpenReadStream();
         await _storageClient.UploadObjectAsync(_bucketName, fileName, file.ContentType, stream);
 
-        return $"https://storage.googleapis.com/{_bucketName}/{fileName}";
+        return $"https://firebasestorage.googleapis.com/v0/b/{_bucketName}/o/{Uri.EscapeDataString(fileName)}?alt=media";
     }
 }

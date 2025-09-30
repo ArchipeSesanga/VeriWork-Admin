@@ -16,8 +16,8 @@
         <h5>Profile Photo</h5>
         <div class="container">
             <div class="container border border-3 bg-secondary d-flex justify-content-center align-items-center my-3">
-                <div class="d-flex flex-column mt-3">
-                    <img src="images/user_profile.png" class="user-profile my-3" alt="user profile picture"/>
+                <div class="d-flex flex-column mt-3 align-items-center">
+                    <img src="~/images/user_profile.png" class="user-profile my-3 emp-profile " alt="user profile picture"/>
                     <div class="d-flex">
                         @* <button class="btn btn-light my-3"> *@
                         @*     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-camera2 " viewBox="0 0 16 16"> *@
@@ -69,9 +69,20 @@
             <span asp-validation-for="Address" class="text-danger"></span>
         </div>
         <div class="form-group mb-3">
-            <label asp-for="Role" class="form-label"></label>
-            <input asp-for="Role" class="form-control" placeholder="Enter role"/>
+            <label asp-for="Role" class="form-label">Role</label>
+            <select asp-for="Role" class="form-select">
+                <option value="">-- Select Role --</option>
+                <option value="Employee">Employee</option>
+                <option value="Admin">Admin</option>
+            </select>
             <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+      
+        <div class="form-group mb-3">
+            <label asp-for="Position" class="form-label">Position</label>
+            <input asp-for="Position" class="form-control" placeholder="e.g. Software Developer, HR Manager"/>
+            <span asp-validation-for="Position" class="text-danger"></span>
         </div>
         
         <div class="form-group mb-3">

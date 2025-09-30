@@ -47,7 +47,7 @@ public class UserController : Controller
 
         string? photoUrl = null;
 
-        if (photo != null && photo.Length > 0)
+        if (model.Photo != null && model.Photo.Length > 0)
         {
             var fileName = $"{Guid.NewGuid()}_{photo.FileName}";
             photoUrl = await _storageService.UploadFileAsync(photo, fileName);

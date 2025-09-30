@@ -43,4 +43,8 @@ public class User
     
     [FirestoreProperty]
     public string? PhotoUrl { get; set; }
+    
+    [FirestoreProperty]
+    [StringLength(100)]
+    public string? Position { get; set; }
 }
