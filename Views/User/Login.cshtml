@@ -5,14 +5,47 @@
 }
 
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <title>login Page</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] Login</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/VeriWork_Admin.styles.css" asp-append-version="true"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Ubuntu+Condensed&family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
+
+  
 </head>
-<body>
-<div>
-    <h5>Login</h5> 
+<body class="bg-light">
+
+<div class="login-container text-center">
+    <form class="form-signin">
+        <img src="~/images/logo2.png" alt="Logo" width="72" height="50">
+        <h1 class="h4 mb-4 fw-bold">Please sign in</h1>
+
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+        <div class="checkbox mb-3 text-start">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+
+        <button class="btn btn-primary btn-lg" type="submit">Sign in</button>
+
+        <p class="mt-5 mb-3 text-muted">© 2025 VeriWork</p>
+    </form>
 </div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
 </body>
 </html>
