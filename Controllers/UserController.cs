@@ -55,6 +55,7 @@ public class UserController : Controller
 
         await _adminService.Register(model, photoUrl);
 
+
         return RedirectToAction("SuccessfulRegistration");
     }
     
@@ -103,6 +104,7 @@ public class UserController : Controller
         // For example, using Entity Framework:
         // var user = await _context.Users.FirstOrDefaultAsync(u => u.IdNumber == idNumber);
         var user = await _adminService.GetProfileAsync(idNumber);
+        
 
         if (user == null)
         {

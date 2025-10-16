@@ -1,37 +1,47 @@
-body{
+body {
     font-family: 'Unbounded', sans-serif, Tahoma, sans-serif;
+    background-color: #f8f9fa;
+   
 }
-.navbar{
+
+.navbar {
     height: 70px;
 }
-#grad{
+
+#grad {
     background-image: url(/images/sidebackground.png);
     background-image: linear-gradient(white, grey);
 }
-.nav-link{
+
+.nav-link {
     color: black;
 }
+
 a:link {
     text-decoration: none;
 }
-.user-profile{
+
+.user-profile {
     height: 200px;
 }
 
-.emp-profile{
+.emp-profile {
     width: 200px;
 }
+
 .bg-color {
     background-color: #F1F8FE;
 }
 
 .login-container {
-    max-width: 400px;           /* limit width */
-    margin: 80px auto;          /* center vertically and horizontally */
+    max-width: 400px;
+    /* limit width */
+    margin: 80px auto;
+    /* center vertically and horizontally */
     background: #fff;
     padding: 40px 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .form-signin input {
@@ -44,4 +54,49 @@ a:link {
 
 .form-signin img {
     margin-bottom: 20px;
+}
+
+/* Tswaro Styles */
+/* from ApproveReject */
+.profile-card {
+    text-align: center;
+    padding: 2rem;
+}
+
+.profile-img-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: #28a745;
+    /* Green for online */
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.document-list .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    font-weight: 500;
+}
+
+.decision-card .btn {
+    width: 100%;
+    margin-top: 0.5rem;
 }
