@@ -1,74 +1,257 @@
 @model System.Collections.Generic.List<VeriWork_Admin.Core.Entities.User>
 
 @{
-    ViewBag.Title = "Dashboard";
+    ViewData["Title"] = "Dashboard";
     Layout = "_Layout";
 }
 
-<head >
-    <link rel="stylesheet" href="css/site.css"/>
-    <title>Dashboard</title>
-</head>
-<div class="text-start">
-    <h2 class="">Dashboard</h2>
-</div>
+<style>
+    /* Main Content Area Styling */
+    .dashboard-content {
+        background-color: #F8F9FA; /* A light, clean background */
+        padding-top: 2rem;
+    }
 
-<div class="text-start mt-4">
-    <h3 class="font-weight-bold">Quick Actions</h3>
-    <p>Perform common employee management tasks.</p>
+    /* Page Heading */
+    .dashboard-heading {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin-bottom: 2rem;
+    }
 
+    /* Card Styling */
+    .dashboard-card {
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 0px 1px rgba(23, 26, 31, 0.05), 0px 0px 2px rgba(23, 26, 31, 0.08);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+    }
 
-    <div class="d-flex gap-2">
-        <button class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-bounding-box mx-2" viewBox="0 0 16 16">
-                <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5"/>
-                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-            </svg> <a asp-controller="User" asp-action="Register" class="text-white">Register Employee</a>
-        </button>
-        <!-- Search -->
-        <input class="form-control form-control-dark w-25"
-               type="text"
-               placeholder="🔍 Search for an employee"
-               aria-label="Search">
+    .card-heading-text {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: #171A1F;
+        margin: 0;
+    }
+
+    .card-heading-subtext {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        color: #565D6D;
+        margin-top: 0.5rem;
+    }
+
+    /* Action Buttons & Inputs */
+    .actions-container {
+        margin-top: 2.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .btn-register-employee {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 0 20px;
+        height: 40px;
+        background: #104387;
+        color: #FFFFFF;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        border: none;
+        text-decoration: none; /* For the <a> tag */
+        white-space: nowrap;
+    }
+    .btn-register-employee:hover {
+        color: #FFFFFF;
+        background: #0d366b;
+    }
+
+    /* Search Box */
+    .search-box-wrapper {
+        position: relative;
+    }
+    .search-box-wrapper .icon {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        fill: #104387;
+    }
+    .search-box {
+        height: 41px;
+        width: 261px;
+        padding-left: 34px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        border: 2px solid #104387;
+        border-radius: 6px;
+        background: #FFFFFF;
+        color: #104387;
+    }
+    .search-box::placeholder {
+        color: #104387;
+        opacity: 0.7;
+    }
+
+    /* Employee Table */
+    .employee-table {
+        margin-top: 2.5rem;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .employee-table thead th {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #565D6D;
+        text-align: left;
+        padding: 14px 16px;
+        border-bottom: 1px solid #DEE1E6;
+    }
+    .employee-table tbody td {
+        padding: 16px;
+        vertical-align: middle;
+        border-bottom: 1px solid #DEE1E6;
+    }
+    .employee-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .employee-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .employee-name {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #171A1F;
+    }
+    .employee-id, .employee-department, .employee-role {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: #565D6D;
+    }
+
+    /* Status Tag */
+    .status-tag {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 9999px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-verified {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+    .status-pending {
+        background: #FEF3C7;
+        color: #92400E;
+    }
+
+    /* Action Button in Table */
+    .btn-view-profile {
+        height: 32px;
+        padding: 0 16px;
+        background: #FFFFFF;
+        border: 1px solid #DEE1E6;
+        border-radius: 6px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #171A1F;
+        text-decoration: none;
+        display: inline-block;
+        line-height: 30px;
+    }
+    .btn-view-profile:hover {
+        background-color: #F9FAFB;
+        border-color: #D1D5DB;
+        color: #171A1F;
+    }
+</style>
+
+<div class="dashboard-content">
+    <h1 class="dashboard-heading">Dashboard</h1>
+
+    <div class="dashboard-card">
+        <h2 class="card-heading-text">Quick Actions</h2>
+        <p class="card-heading-subtext">Perform common employee management tasks.</p>
+        <div class="actions-container">
+            <a asp-controller="User" asp-action="Register" class="btn-register-employee">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5" />
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                </svg>
+                Register Employee
+            </a>
+            <div class="search-box-wrapper">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+                <input type="text" class="search-box" placeholder="Search for an employee" aria-label="Search">
+            </div>
+        </div>
     </div>
 
-
-    <section class="mt-5">
-        <div>
-            <h4>Employee Directory</h4>
-            <p class="text-muted">View and manage all employee records.</p>
-
-            <table class="table table-hover align-middle">
-                <thead class="thead-dark">
+    <div class="dashboard-card">
+        <h2 class="card-heading-text">Employee Directory</h2>
+        <p class="card-heading-subtext">View and manage all employee records.</p>
+        <table class="employee-table">
+            <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Employee</th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Department</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Actions</th>
+                    <th>#</th>
+                    <th>Employee</th>
+                    <th>ID</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 @if (Model != null && Model.Any())
                 {
                     var index = 1;
                     foreach (var user in Model)
                     {
                         <tr>
-                            <th scope="row">@index</th>
-                            <td>@($"{user.Name} {user.Surname}")</td>
-                            <td>@user.IdNumber</td>
-                            <td>@user.DepartmentId</td>
-                            <td>@user.Role</td>
+                            <td><strong>@index</strong></td>
                             <td>
-                                <span class="badge bg-secondary">N/A</span> @* Status placeholder until implemented *@
+                                <div class="employee-info">
+                                    <img src="@(user.PhotoUrl ?? "/images/user_profile.png")" alt="Avatar" class="avatar" />
+                                    <span class="employee-name">@($"{user.Name} {user.Surname}")</span>
+                                </div>
+                            </td>
+                            <td><span class="employee-id">@user.IdNumber</span></td>
+                            <td><span class="employee-department">@user.DepartmentId</span></td>
+                            <td><span class="employee-role">@user.Role</span></td>
+                            <td>
+                                <span class="status-tag status-verified">Verified</span>
+                                @* Example of another status: <span class="status-tag status-pending">Pending</span> *@
                             </td>
                             <td>
-                                <a asp-controller="User" 
-                                   asp-action="EmployeeProfile" 
-                                   asp-route-idNumber="@user.IdNumber"
-                                   class="btn btn-sm btn-outline-primary">
+                                <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@user.IdNumber" class="btn-view-profile">
                                     View Profile
                                 </a>
                             </td>
@@ -82,8 +265,7 @@
                         <td colspan="7" class="text-center text-muted">No employees found.</td>
                     </tr>
                 }
-                </tbody>
-            </table>
-        </div>
-    </section>
+            </tbody>
+        </table>
+    </div>
 </div>
