@@ -5,7 +5,8 @@ body{
     height: 70px;
 }
 #grad{
-     background-image: linear-gradient(white, grey);
+    background-image: url(/images/sidebackground.png);
+    background-image: linear-gradient(white, grey);
 }
 .nav-link{
     color: black;
