@@ -21,8 +21,9 @@
                 <span>Employee ID: @Model.IdNumber</span>
                 <div class="button mt-2 d-flex flex-row gap-2">
                     <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" 
-                       class="btn btn-sm btn-primary w-100">Update/Edit Info</a>
-                    <button class="btn btn-sm btn-primary w-100">Verify Status</button>
+                       class="btn btn-sm btn-primary w-100">Update/Edit Info</a>                   
+                    <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.IdNumber" 
+                       class="btn btn-sm btn-primary w-100">Verify Status</a>
                 </div>
             </div>
         </div>

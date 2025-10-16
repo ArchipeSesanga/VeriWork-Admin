@@ -1,0 +1,111 @@
+@model VeriWork_Admin.Application.Models.RegistrationModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+<div class="text-start">
+    <h2>Edit Employee Information</h2>
+    <p>
+        Update the form below to modify the employee's details.
+    </p>
+</div>
+
+<div class="pt-3">
+    <form asp-action="Edit" asp-controller="User" method="post" enctype="multipart/form-data">
+        
+        <h5>Profile Photo</h5>
+        <div class="container">
+            <div class="container border border-3 bg-secondary d-flex justify-content-center align-items-center my-3">
+                <div class="d-flex flex-column mt-3 align-items-center">
+                    <img src="@(Model.PhotoUrl ?? "~/images/user_profile.png")" class="user-profile my-3 emp-profile " alt="user profile picture" style="width:150px; height:150px; border-radius:50%; object-fit:cover;"/>
+                    <div class="d-flex">
+                        <div class="form-group mb-3">
+                            <label asp-for="Photo" class="form-label">Upload New Photo</label>
+                            <input asp-for="Photo" type="file" class="form-control"/>
+                            <span asp-validation-for="Photo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h5>Personal Information</h5>
+        
+        <input type="hidden" asp-for="IdNumber" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" placeholder="Enter name"/>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Surname" class="form-label"></label>
+            <input asp-for="Surname" class="form-control" placeholder="Enter surname"/>
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="IdNumber" class="form-label"></label>
+            <input asp-for="IdNumber" class="form-control" placeholder="Enter IdNumber" readonly/>
+            <span asp-validation-for="IdNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="DepartmentId" class="form-label"></label>
+            <input asp-for="DepartmentId" class="form-control" placeholder="Enter Department ID"/>
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" class="form-control" placeholder="Enter phone"/>
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label asp-for="Address" class="form-label"></label>
+            <input asp-for="Address" class="form-control" placeholder="Enter Address"/>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label asp-for="Role" class="form-label">Role</label>
+            <select asp-for="Role" class="form-select">
+                <option value="">-- Select Role --</option>
+                <option value="Employee">Employee</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Position" class="form-label">Position</label>
+            <input asp-for="Position" class="form-control" placeholder="e.g. Software Developer, HR Manager"/>
+            <span asp-validation-for="Position" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="Enter email"/>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <h5 class="mt-4">Update Password (Optional)</h5>
+        <div class="form-group mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" placeholder="Enter new password" type="password"/>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm new password" type="password"/>
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+        
+    </form>
+</div>

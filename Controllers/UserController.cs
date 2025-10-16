@@ -84,10 +84,83 @@ public class UserController : Controller
     {
         if (string.IsNullOrEmpty(idNumber))
             return BadRequest("ID Number is required");
-        
+
         var user = await _adminService.GetProfileAsync(idNumber);
         if (user == null)
             return NotFound();
         return View(user);
     }
+
+    // Inside your UserController.cs
+    public async Task<IActionResult> ApproveRejectScreen(string idNumber)
+    {
+        if (string.IsNullOrEmpty(idNumber))
+        {
+            return NotFound();
+        }
+
+        // Your logic to find the user by their ID number from the database
+        // For example, using Entity Framework:
+        // var user = await _context.Users.FirstOrDefaultAsync(u => u.IdNumber == idNumber);
+        var user = await _adminService.GetProfileAsync(idNumber);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        return View(user); // Pass the single user object to the view
+    }
+// Add these two methods to your UserController.cs
+
+[HttpGet]
+public async Task<IActionResult> Edit(string idNumber)
+{
+    if (string.IsNullOrEmpty(idNumber))
+    {
+        return BadRequest("ID Number is required.");
+    }
+
+    // Fetch the existing user data from your service
+    var user = await _adminService.GetProfileAsync(idNumber);
+    if (user == null)
+    {
+        return NotFound();
+    }
+
+    // Map the user data to your RegistrationModel to pre-populate the form
+    var model = new RegistrationModel
+    {
+        Name = user.Name,
+        Surname = user.Surname,
+        IdNumber = user.IdNumber,
+        DepartmentId = user.DepartmentId,
+        Phone = user.Phone,
+        Address = user.Address,
+        Role = user.Role,
+        Position = user.Position,
+        Email = user.Email,
+        PhotoUrl = user.PhotoUrl // Pass the existing photo URL to the view
+    };
+
+    return View(model);
+}
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(RegistrationModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            // If the form data is invalid, return the view with the entered data
+            return View(model);
+        }
+
+        // You will need to create an "UpdateUserAsync" method in your AdminService
+        // to handle the logic of saving the updated data to Firebase.
+        // await _adminService.UpdateUserAsync(model);
+
+        // After successfully updating, redirect to the dashboard or profile page
+        return RedirectToAction("Dashboard");
+    }
+
 }
