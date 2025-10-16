@@ -21,3 +21,27 @@ a:link {
 .emp-profile{
     width: 200px;
 }
+.bg-color {
+    background-color: #F1F8FE;
+}
+
+.login-container {
+    max-width: 400px;           /* limit width */
+    margin: 80px auto;          /* center vertically and horizontally */
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.form-signin input {
+    margin-bottom: 15px;
+}
+
+.form-signin button {
+    width: 100%;
+}
+
+.form-signin img {
+    margin-bottom: 20px;
+}
