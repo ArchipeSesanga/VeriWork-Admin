@@ -1,24 +1,59 @@
-using Google.Cloud.Storage.V1;
+using Firebase.Storage;
+using Microsoft.AspNetCore.Http;
 
-namespace VeriWork_Admin.Application.Services;
-
-public class FirebaseStorageService
+namespace VeriWork_Admin.Application.Services
 {
-    private readonly StorageClient _storageClient;
-    private readonly string _bucketName;
-
-    public FirebaseStorageService(string projectId, string bucketName, string credentialsPath)
+    public class FirebaseStorageService
     {
-        Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
-        _storageClient = StorageClient.Create();
-        _bucketName = bucketName;
-    }
+        private readonly string _projectId;
+        private readonly string _bucketName;
+        private readonly string _credentialPath;
 
-    public async Task<string> UploadFileAsync(IFormFile file, string fileName)
-    {
-        using var stream = file.OpenReadStream();
-        await _storageClient.UploadObjectAsync(_bucketName, fileName, file.ContentType, stream);
+        public FirebaseStorageService(string projectId, string bucketName, string credentialPath)
+        {
+            _projectId = projectId;
+            _bucketName = bucketName;
+            _credentialPath = credentialPath;
+        }
 
-        return $"https://firebasestorage.googleapis.com/v0/b/{_bucketName}/o/{Uri.EscapeDataString(fileName)}?alt=media";
+        /// <summary>
+        /// Uploads a file to Firebase Storage and returns its public URL.
+        /// Automatically organizes files under /uploads/{year}/{month}/
+        /// </summary>
+        public async Task<string> UploadFileAsync(IFormFile file, string fileName)
+        {
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("Invalid file.");
+
+            try
+            {
+                // Organize by year/month folders
+                string folderPath = $"uploads/{DateTime.UtcNow:yyyy}/{DateTime.UtcNow:MM}/";
+                string fullFilePath = $"{folderPath}{fileName}";
+
+                using var stream = file.OpenReadStream();
+
+                var storage = new FirebaseStorage(
+                    _bucketName,
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult<string>(null),
+                        ThrowOnCancel = true
+                    }
+                );
+
+                // Upload file to Firebase
+                var task = storage
+                    .Child(fullFilePath)
+                    .PutAsync(stream);
+
+                string downloadUrl = await task;
+                return downloadUrl;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"File upload failed: {ex.Message}");
+            }
+        }
     }
 }

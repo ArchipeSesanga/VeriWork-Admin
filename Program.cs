@@ -6,32 +6,30 @@ using VeriWork_Admin.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Firestore setup
+// Firestore setup
 string projectId = "veriwork-database";
 string credentialPath = Path.Combine(Directory.GetCurrentDirectory(), "Infrastructure/Config/service-account.json");
 string bucketName = "veriwork-database.firebasestorage.app";
 
 FirestoreDb db = FirebaseInitializer.Initialize(projectId, credentialPath);
 
-
-
-// Add services to the container.
+// Add services to the container
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(); // enable session support
 
-//DI
+// Dependency Injection
 builder.Services.AddSingleton(db);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<AdminService>();
-builder.Services.AddSingleton(new FirebaseStorageService(projectId, bucketName, credentialPath));
-
+builder.Services.AddSingleton(provider =>
+    new FirebaseStorageService(projectId, bucketName, credentialPath));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -40,10 +38,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession(); // use session middleware
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Login}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();

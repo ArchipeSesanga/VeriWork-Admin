@@ -19,15 +19,12 @@ public class UserController : Controller
     public async Task<IActionResult> Dashboard()
     {
         //Use: Display dashboard with list of users
+        //Users in our case are Employers 
         var users = await _adminService.GetAllUsersAsync();
         return View(users);  // pass list to the view
     }
     [HttpGet]
-    public IActionResult Register()
-    {
-        //Use: Display the registration page
-        return View();
-    }
+    public IActionResult Register() => View();
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
