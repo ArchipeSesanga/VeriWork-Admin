@@ -14,6 +14,14 @@
         border-radius: 10px;
         padding: 56px;
         box-shadow: 0px 0px 1px rgba(23, 26, 31, 0.07), 0px 0px 2px rgba(23, 26, 31, 0.12);
+        /* --- NEW: Added for blur transition --- */
+        transition: filter 0.3s ease-in-out;
+    }
+
+    /* --- NEW: Class to apply blur --- */
+    .blurred {
+        filter: blur(5px);
+        pointer-events: none; /* Prevents interaction with blurred content */
     }
 
     /* Header */
@@ -35,7 +43,7 @@
         color: #565D6D;
         margin-top: 8px;
     }
-    .btn-back {
+    .btn-back-profile {
         height: 40px;
         padding: 0 16px;
         background: rgba(16, 67, 135, 0.7);
@@ -194,25 +202,69 @@
         border: none;
         color: #FFFFFF;
     }
-    
-    .btn-back-profile {
+
+    /* --- NEW: POP-UP STYLES --- */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+    .popup-box {
+        width: 448px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 8.5px 13.75px rgba(23, 26, 31, 0.4), 0px 0px 2px rgba(23, 26, 31, 0.08);
+        text-align: center;
+        padding: 32px;
+    }
+    .popup-icon {
+        width: 64px;
+        height: 64px;
+        color: #B0251A; /* Red color from image */
+        margin: 0 auto 16px;
+    }
+    .popup-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0 0 8px 0;
+    }
+    .popup-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        color: #565D6D;
+        margin-bottom: 2rem;
+    }
+    .btn-popup-action {
+        width: 100%;
         height: 40px;
-        padding: 0 16px;
-        background: rgba(16, 67, 135, 0.7);
+        background: #104387;
         color: #FFFFFF;
-        font-family: 'Unbounded', sans-serif;
+        font-family: 'Inter', sans-serif;
         font-size: 14px;
         font-weight: 500;
+        border: none;
         border-radius: 6px;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+    }
+    .btn-popup-action:hover {
+        background: #0A2A55;
+        color: #FFFFFF;
     }
 </style>
 
-<div class="edit-page-container">
-    <form asp-action="Edit" asp-controller="User" method="post" enctype="multipart/form-data">
+<div class="edit-page-container" id="mainContent">
+    <form asp-action="Edit" asp-controller="User" method="post" enctype="multipart/form-data" id="editForm">
 
         <header class="page-header">
             <div>
@@ -329,16 +381,8 @@
                  <div class="form-group">
                     <label>Province</label>
                     <select class="form-control">
-                    <option>Select Province</option>
-                    <option>Eastern Cape</option>
-                    <option>Free State</option>
-                    <option>Gauteng</option>
-                    <option>KwaZulu-Natal</option>
-                    <option>Limpopo</option>
-                    <option>Mpumalanga</option>
-                    <option>North Wes</option>
-                    <option>Northern Cape,</option>
-                    <option>Western Cape</option>
+                        <option>Free State</option>
+                        <option>Gauteng</option>
                     </select>
                 </div>
                  <div class="form-group">
@@ -349,7 +393,7 @@
                     <label>Country</label>
                     <select class="form-control">
                         <option>South Africa</option>
-                        <option>Other</option>
+                        <option>United States</option>
                     </select>
                 </div>
             </div>
@@ -376,6 +420,19 @@
     </form>
 </div>
 
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box">
+        <div class="popup-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+             </svg>
+        </div>
+        <h2 class="popup-title">Information Update Successful!</h2>
+        <p class="popup-text">The employee's profile information has been updated successfully.</p>
+        <a asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-popup-action">View Employee Profile</a>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -393,6 +450,24 @@
                         avatarPlaceholder.style.display = 'none';
                     }
                     reader.readAsDataURL(file);
+                }
+            });
+
+            // --- NEW SCRIPT FOR POP-UP ---
+            const editForm = document.getElementById('editForm');
+            const overlay = document.getElementById('popupOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            editForm.addEventListener('submit', function (event) {
+                // Check if the form is valid before showing the pop-up
+                if (editForm.checkValidity()) {
+                    event.preventDefault(); // Prevent the default form submission
+
+                    // Show the pop-up and apply blur
+                    overlay.style.display = 'flex';
+                    mainContent.classList.add('blurred');
+
+                    // NOTE: In a real app, this is where you would submit the form data via AJAX.
                 }
             });
         });

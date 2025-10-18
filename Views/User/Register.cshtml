@@ -8,12 +8,20 @@
 <style>
     .register-page-container {
         font-family: 'Inter', sans-serif;
-     /* max-width: 896px; */
+       /* max-width: 896px; */
         margin: 2rem auto;
         background: #FFFFFF;
         border-radius: 10px;
         padding: 56px;
         box-shadow: 0px 0px 1px rgba(23, 26, 31, 0.07), 0px 0px 2px rgba(23, 26, 31, 0.12);
+        /* --- NEW: Added for blur transition --- */
+        transition: filter 0.3s ease-in-out;
+    }
+
+    /* --- NEW: Class to apply blur --- */
+    .blurred {
+        filter: blur(5px);
+        pointer-events: none; /* Prevents interaction with blurred content */
     }
 
     /* Header */
@@ -196,10 +204,70 @@
         border: none;
         color: #FFFFFF;
     }
+
+    /* --- NEW: POP-UP STYLES --- */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1050; /* Ensure it's on top */
+    }
+    .popup-box {
+        width: 448px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 8.5px 13.75px rgba(23, 26, 31, 0.4), 0px 0px 2px rgba(23, 26, 31, 0.08);
+        text-align: center;
+        padding: 32px;
+    }
+    .popup-icon {
+        width: 64px;
+        height: 64px;
+        color: #B0251A; /* Red color from image */
+        margin: 0 auto 16px;
+    }
+    .popup-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0 0 8px 0;
+    }
+    .popup-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        color: #565D6D;
+        margin-bottom: 2rem;
+    }
+    .btn-popup-action {
+        width: 100%;
+        height: 40px;
+        background: #104387;
+        color: #FFFFFF;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-popup-action:hover {
+        background: #0A2A55;
+        color: #FFFFFF;
+    }
+
 </style>
 
-<div class="register-page-container">
-    <form asp-action="Register" asp-controller="User" method="post" enctype="multipart/form-data">
+<div class="register-page-container" id="mainContent">
+    <form asp-action="Register" asp-controller="User" method="post" enctype="multipart/form-data" id="registerForm">
 
         <header class="page-header">
             <div>
@@ -211,7 +279,6 @@
             </a>
         </header>
 
-        <!-- Profile Photo Section -->
         <section class="form-section">
             <h2 class="form-section-title">Profile Photo</h2>
             <div class="photo-upload-container">
@@ -228,7 +295,6 @@
             </div>
         </section>
 
-        <!-- Personal Information Section -->
         <section class="form-section">
             <h2 class="form-section-title">Personal Information</h2>
             <div class="form-grid">
@@ -259,7 +325,6 @@
             </div>
         </section>
 
-        <!-- Employment Details Section -->
         <section class="form-section">
             <h2 class="form-section-title">Employment Details</h2>
             <div class="form-grid">
@@ -287,7 +352,6 @@
             </div>
         </section>
 
-        <!-- Contact Information -->
         <section class="form-section">
             <h2 class="form-section-title">Contact Information</h2>
             <div class="form-grid">
@@ -312,7 +376,6 @@
             </div>
         </section>
         
-        <!-- Address Details -->
         <section class="form-section">
             <h2 class="form-section-title">Address Details</h2>
             <div class="form-grid" style="grid-template-columns: 2fr 1fr;">
@@ -330,16 +393,16 @@
                  <div class="form-group">
                     <label>Province</label>
                     <select class="form-control">
-                    <option>Select Province</option>
-                    <option>Eastern Cape</option>
-                    <option>Free State</option>
-                    <option>Gauteng</option>
-                    <option>KwaZulu-Natal</option>
-                    <option>Limpopo</option>
-                    <option>Mpumalanga</option>
-                    <option>North Wes</option>
-                    <option>Northern Cape,</option>
-                    <option>Western Cape</option>
+                        <option>Select Province</option>
+                        <option>Eastern Cape</option>
+                        <option>Free State</option>
+                        <option>Gauteng</option>
+                        <option>KwaZulu-Natal</option>
+                        <option>Limpopo</option>
+                        <option>Mpumalanga</option>
+                        <option>North West</option>
+                        <option>Northern Cape</option>
+                        <option>Western Cape</option>
                     </select>
                 </div>
                  <div class="form-group">
@@ -349,16 +412,14 @@
                 <div class="form-group">
                     <label>Country</label>
                     <select class="form-control">
-                    <option>Select Country</option>
-                    <option>South Africa</option>
-                    <option>Other</option>
+                        <option>Select Country</option>
+                        <option>South Africa</option>
+                        <option>Other</option>
                     </select>
                 </div>
             </div>
         </section>
 
-
-        <!-- Documents Section -->
         <section class="form-section">
             <h2 class="form-section-title">Documents</h2>
             <div class="document-upload-container">
@@ -376,8 +437,20 @@
             <button type="reset" class="btn-form btn-reset">Reset Form</button>
             <button type="submit" class="btn-form btn-submit">Submit Registration</button>
         </div>
-
     </form>
+</div>
+
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box">
+        <div class="popup-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+             </svg>
+        </div>
+        <h2 class="popup-title">Employee Registration Successful!</h2>
+        <p class="popup-text">The new employee's profile has been created successfully.</p>
+        <a asp-action="Dashboard" asp-controller="User" class="btn-popup-action">View Employee Profile</a>
+    </div>
 </div>
 
 @section Scripts {
@@ -397,6 +470,18 @@
                         avatarPlaceholder.style.display = 'none';
                     }
                     reader.readAsDataURL(file);
+                }
+            });
+
+            const registerForm = document.getElementById('registerForm');
+            const overlay = document.getElementById('popupOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            registerForm.addEventListener('submit', function (event) {
+                if (registerForm.checkValidity()) {
+                    event.preventDefault(); 
+                    overlay.style.display = 'flex';
+                    mainContent.classList.add('blurred');
                 }
             });
         });
