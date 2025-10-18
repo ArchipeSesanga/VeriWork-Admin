@@ -6,6 +6,14 @@
 <style>
     .audit-log-page {
         font-family: 'Inter', sans-serif;
+        /* --- NEW: Added for blur transition --- */
+        transition: filter 0.3s ease-in-out;
+    }
+
+    /* --- NEW: Class to apply blur --- */
+    .blurred {
+        filter: blur(5px);
+        pointer-events: none; /* Prevents interaction with blurred content */
     }
 
     /* Page Header */
@@ -70,7 +78,7 @@
         font-weight: 500;
         font-size: 14px;
     }
-     .btn-apply-filters:hover {
+    .btn-apply-filters:hover {
         background: #0A4D84;
     }
 
@@ -155,9 +163,66 @@
         background-color: #FEE2E2;
         color: #991B1B;
     }
+    
+    /* --- NEW: POP-UP STYLES --- */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+    .popup-box {
+        width: 448px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 8.5px 13.75px rgba(23, 26, 31, 0.4), 0px 0px 2px rgba(23, 26, 31, 0.08);
+        text-align: center;
+        padding: 32px;
+        display: none; /* Hidden by default */
+    }
+    .popup-icon {
+        width: 64px;
+        height: 64px;
+        color: #B0251A; /* Red color from image */
+        margin: 0 auto 16px;
+    }
+    .popup-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0 0 8px 0;
+    }
+    .popup-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        color: #565D6D;
+        margin-bottom: 2rem;
+    }
+    .btn-popup-action {
+        width: 100%;
+        height: 40px;
+        background: #104387;
+        color: #FFFFFF;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .btn-popup-action:hover {
+        background: #0A2A55;
+    }
+
 </style>
 
-<div class="audit-log-page">
+<div class="audit-log-page" id="mainContent">
     <div class="page-header">
         <h1>Audit Log</h1>
         <a asp-action="Dashboard" asp-controller="User" class="btn-back">
@@ -170,7 +235,6 @@
         <button class="btn-apply-filters">Apply Filters</button>
     </div>
 
-    <!-- August 2024 -->
     <div class="log-section">
         <div class="log-section-header">
             <h4>August 2024</h4>
@@ -229,57 +293,71 @@
             </tbody>
         </table>
     </div>
+</div>
 
-    <!-- July 2024 -->
-    <div class="log-section">
-        <div class="log-section-header">
-            <h4>July 2024</h4>
-            <button class="btn-download">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
-                </svg>
-                Download
-            </button>
+<div class="popup-overlay" id="popupOverlay">
+    
+    <div class="popup-box" id="inProgressPopup">
+        <div class="popup-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+             </svg>
         </div>
-        <table class="audit-table">
-            <thead>
-                <tr>
-                    <th>Employee ID</th>
-                    <th>Action Type</th>
-                    <th>Timestamp</th>
-                    <th>Verified By</th>
-                    <th>Status</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
-            <tbody>
-                 <tr>
-                    <td>EMP004</td>
-                    <td>Document Upload</td>
-                    <td>2024-07-20 11:00 AM</td>
-                    <td>Admin B</td>
-                    <td><span class="status-tag status-approved">Approved</span></td>
-                    <td>Driver's license updated.</td>
-                </tr>
-                <tr>
-                    <td>EMP001</td>
-                    <td>Verification Request</td>
-                    <td>2024-07-18 01:30 PM</td>
-                    <td>Admin C</td>
-                    <td><span class="status-tag status-pending">Pending</span></td>
-                    <td>Annual compliance check.</td>
-                </tr>
-                <tr>
-                    <td>EMP006</td>
-                    <td>Document Review</td>
-                    <td>2024-07-15 03:00 PM</td>
-                    <td>Admin A</td>
-                    <td><span class="status-tag status-approved">Approved</span></td>
-                    <td>Offer letter confirmed.</td>
-                </tr>
-            </tbody>
-        </table>
+        <h2 class="popup-title">Download in progress...</h2>
+        <p class="popup-text">Please wait for your file to be retrieved from the database.</p>
+    </div>
+
+    <div class="popup-box" id="successfulPopup">
+        <div class="popup-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+        </div>
+        <h2 class="popup-title">Download Successful!</h2>
+        <button class="btn-popup-action" id="closePopupButton">Back to Audit Log</button>
     </div>
 
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const downloadButtons = document.querySelectorAll('.btn-download');
+            const overlay = document.getElementById('popupOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const inProgressPopup = document.getElementById('inProgressPopup');
+            const successfulPopup = document.getElementById('successfulPopup');
+            const closeButton = document.getElementById('closePopupButton');
+
+            function openPopup() {
+                // Show the "in progress" state first
+                overlay.style.display = 'flex';
+                inProgressPopup.style.display = 'block';
+                successfulPopup.style.display = 'none';
+                mainContent.classList.add('blurred');
+
+                // Simulate a download process
+                setTimeout(function () {
+                    inProgressPopup.style.display = 'none';
+                    successfulPopup.style.display = 'block';
+                }, 2500); // 2.5 second delay
+            }
+
+            function closePopup() {
+                overlay.style.display = 'none';
+                mainContent.classList.remove('blurred');
+            }
+
+            // Attach event listener to all download buttons
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default button action
+                    openPopup();
+                });
+            });
+
+            // Attach event listener to the close button
+            closeButton.addEventListener('click', closePopup);
+        });
+    </script>
+}
