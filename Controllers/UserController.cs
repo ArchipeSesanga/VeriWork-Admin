@@ -62,10 +62,6 @@ public class UserController : Controller
     }
     
     
-
-    
-    
-    
     public IActionResult SuccessfulRegistration()
     {
         //testing purpose

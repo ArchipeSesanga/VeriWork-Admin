@@ -1,99 +1,285 @@
-
-
 @{
-    ViewBag.Title = "title";
+    ViewData["Title"] = "Audit Log";
     Layout = "_Layout";
 }
-<div class="text-start d-flex justify-content-start  gap-5 pt-2">
-    <h2>Audit Logs</h2>
-    <a class="btn btn-primary" asp-controller="User" asp-action="Dashboard">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-        </svg>
-        Back to Directory
-    </a>
-</div>
 
-<div class="container p-5">
-    <div class="row">
-        <div class="col-md-12">
-            <form class="d-flex">
-                <div class="input-group">
-                    <input class="form-control form-control-lg" type="search" placeholder="Filter by employee's ID" aria-label="Search">
-                    <button class="btn btn-primary px-4 " type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                        </svg> <span class="px-2">Apply Filter</span>
-                    </button>
-                </div>
-            </form>
+<style>
+    .audit-log-page {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .page-header h1 {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0;
+    }
+    .btn-back {
+        height: 40px;
+        padding: 0 16px;
+        background: rgba(16, 67, 135, 0.7);
+        color: #FFFFFF;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-back:hover {
+        background: rgba(16, 67, 135, 1);
+        color: #FFFFFF;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 0 1px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.1);
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    .filter-input {
+        width: 590px;
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid #DEE1E6;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+    .btn-apply-filters {
+        height: 40px;
+        padding: 0 24px;
+        background: #0F74C7;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+     .btn-apply-filters:hover {
+        background: #0A4D84;
+    }
+
+    /* Log Section */
+    .log-section {
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0 0 1px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    .log-section-header {
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #DEE1E6;
+    }
+    .log-section-header h4 {
+        font-family: 'Inter', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        color: #171A1F;
+        margin: 0;
+    }
+    .btn-download {
+        height: 36px;
+        padding: 0 16px;
+        background: #FFFFFF;
+        color: #0F74C7;
+        border: 1px solid #DEE1E6;
+        border-radius: 6px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-download:hover {
+        background: #F9FAFB;
+    }
+
+    /* Audit Table */
+    .audit-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .audit-table th, .audit-table td {
+        padding: 14px 24px;
+        text-align: left;
+        border-bottom: 1px solid #DEE1E6;
+        font-size: 14px;
+    }
+    .audit-table thead th {
+        font-weight: 600;
+        color: #565D6D;
+    }
+    .audit-table tbody td {
+        color: #171A1F;
+    }
+    .audit-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Status Tags */
+    .status-tag {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .status-approved {
+        background-color: #D1FAE5;
+        color: #065F46;
+    }
+    .status-pending {
+        background-color: #FFEDD5;
+        color: #9A3412;
+    }
+    .status-rejected {
+        background-color: #FEE2E2;
+        color: #991B1B;
+    }
+</style>
+
+<div class="audit-log-page">
+    <div class="page-header">
+        <h1>Audit Log</h1>
+        <a asp-action="Dashboard" asp-controller="User" class="btn-back">
+            &leftarrow; Back to Directory
+        </a>
+    </div>
+
+    <div class="filter-bar">
+        <input type="text" class="filter-input" placeholder="Filter by Employee ID, Action Type, or Verifier">
+        <button class="btn-apply-filters">Apply Filters</button>
+    </div>
+
+    <!-- August 2024 -->
+    <div class="log-section">
+        <div class="log-section-header">
+            <h4>August 2024</h4>
+            <button class="btn-download">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                </svg>
+                Download
+            </button>
         </div>
-    </div>
-</div>
-
-@* table *@
-<div class="pt-2">
-    <div class="d-flex justify-content-between">
-        <h4 class="fw-bold text-black">August 2024</h4>
-        <a class="btn btn-outline-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
-            </svg> Download </a>
-    </div>
-    <div class="container">
-        <table class="table ">
+        <table class="audit-table">
             <thead>
-            <tr>
-                <th scope="col">Employee ID</th>
-                <th scope="col">Action Type</th>
-                <th scope="col">Timestamp</th>
-                <th scope="col">Verified By</th>
-                <th scope="col">Status</th>
-                <th scope="col">Remarks</th>
-            </tr>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Action Type</th>
+                    <th>Timestamp</th>
+                    <th>Verified By</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">EMP001</th>
-                <td>Document Upload</td>
-                <td>2024-08-28 10:30 AM</td>
-                <td>Admin A</td>
-                <td><span class="badge bg-success">Approved</span></td>
-                <td>Passport</td>
-            </tr>
-            <tr>
-                <th scope="row">EMP002</th>
-                <td>Verification Request</td>
-                <td>2024-08-28 10:30 AM</td>
-                <td>Admin B</td>
-                <td><span class="badge bg-warning">Pending</span></td>
-                <td>New Hire onboarding</td>
-            </tr>
-            <tr>
-                <th scope="row">EMP003</th>
-                <td>Document Upload</td>
-                <td>2024-08-28 10:30 AM</td>
-                <td>Admin A</td>
-                <td><span class="badge bg-success">Approved</span></td>
-                <td>Passport scanned</td>
-            </tr>
-
-            <tr>
-                <th scope="row">EMP003</th>
-                <td>Document Upload</td>
-                <td>2024-08-28 10:30 AM</td>
-                <td>Admin A</td>
-                <td><span class="badge bg-danger">Rejected</span></td>
-                <td>Passport scanned</td>
-            </tr>
+                <tr>
+                    <td>EMP001</td>
+                    <td>Document Upload</td>
+                    <td>2024-08-28 10:30 AM</td>
+                    <td>Admin A</td>
+                    <td><span class="status-tag status-approved">Approved</span></td>
+                    <td>Passport scanned and uploaded.</td>
+                </tr>
+                <tr>
+                    <td>EMP003</td>
+                    <td>Verification Request</td>
+                    <td>2024-08-27 02:15 PM</td>
+                    <td>Admin B</td>
+                    <td><span class="status-tag status-pending">Pending</span></td>
+                    <td>New hire onboarding documents.</td>
+                </tr>
+                <tr>
+                    <td>EMP002</td>
+                    <td>Document Review</td>
+                    <td>2024-08-26 09:00 AM</td>
+                    <td>Admin A</td>
+                    <td><span class="status-tag status-rejected">Rejected</span></td>
+                    <td>Incorrect ID format, required resubmission.</td>
+                </tr>
+                 <tr>
+                    <td>EMP005</td>
+                    <td>Verification Completion</td>
+                    <td>2024-08-25 04:45 PM</td>
+                    <td>Admin C</td>
+                    <td><span class="status-tag status-approved">Approved</span></td>
+                    <td>All documents validated successfully.</td>
+                </tr>
             </tbody>
         </table>
     </div>
-    
+
+    <!-- July 2024 -->
+    <div class="log-section">
+        <div class="log-section-header">
+            <h4>July 2024</h4>
+            <button class="btn-download">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                </svg>
+                Download
+            </button>
+        </div>
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Action Type</th>
+                    <th>Timestamp</th>
+                    <th>Verified By</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                 <tr>
+                    <td>EMP004</td>
+                    <td>Document Upload</td>
+                    <td>2024-07-20 11:00 AM</td>
+                    <td>Admin B</td>
+                    <td><span class="status-tag status-approved">Approved</span></td>
+                    <td>Driver's license updated.</td>
+                </tr>
+                <tr>
+                    <td>EMP001</td>
+                    <td>Verification Request</td>
+                    <td>2024-07-18 01:30 PM</td>
+                    <td>Admin C</td>
+                    <td><span class="status-tag status-pending">Pending</span></td>
+                    <td>Annual compliance check.</td>
+                </tr>
+                <tr>
+                    <td>EMP006</td>
+                    <td>Document Review</td>
+                    <td>2024-07-15 03:00 PM</td>
+                    <td>Admin A</td>
+                    <td><span class="status-tag status-approved">Approved</span></td>
+                    <td>Offer letter confirmed.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </div>
-
-
-
-<section>
-    
-</section>

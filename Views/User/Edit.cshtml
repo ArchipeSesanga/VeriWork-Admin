@@ -194,6 +194,21 @@
         border: none;
         color: #FFFFFF;
     }
+    
+    .btn-back-profile {
+        height: 40px;
+        padding: 0 16px;
+        background: rgba(16, 67, 135, 0.7);
+        color: #FFFFFF;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
 </style>
 
 <div class="edit-page-container">
@@ -204,8 +219,8 @@
                 <h1>Update Information</h1>
                 <p>Edit the form below to update your employee information.</p>
             </div>
-            <a asp-action="Dashboard" class="btn-back">
-                &leftarrow; Back to Directory
+            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-back-profile">
+                &leftarrow; Back to Profile
             </a>
         </header>
 
