@@ -1,107 +1,403 @@
-@* It's assumed this view will receive a single employee object, 
-  so the model should be the User entity, not a List of them. 
-*@
 @model VeriWork_Admin.Core.Entities.User
 
 @{
-    ViewBag.Title = "title";
+    ViewData["Title"] = "Approve or Reject Employee";
     Layout = "_Layout";
 }
 
-@* Custom CSS for this specific page to achieve the desired look and feel *@
 <style>
-   
+    .verification-page-container {
+        display: grid;
+        grid-template-columns: 288px 1fr 370px;
+        gap: 24px;
+        padding: 2rem 0;
+        font-family: 'Inter', sans-serif;
+        /* --- NEW: Added for blur transition --- */
+        transition: filter 0.3s ease-in-out;
+    }
 
+    /* --- NEW: Class to apply blur --- */
+    .blurred {
+        filter: blur(5px);
+        pointer-events: none; /* Prevents interaction with blurred content */
+    }
+
+    /* Shared Card Styling */
+    .verification-card {
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 0px 1px rgba(23, 26, 31, 0.07), 0px 1px 2px rgba(23, 26, 31, 0.12);
+    }
+
+    /* Left Column: Employee Profile Card */
+    .profile-card {
+        padding: 24px;
+        text-align: center;
+    }
+    .avatar-container {
+        position: relative;
+        width: 131px;
+        height: 131px;
+        margin: 0 auto 16px;
+    }
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .online-indicator {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 33px;
+        height: 33px;
+        background-color: #65A30D;
+        border: 2px solid white;
+        border-radius: 50%;
+    }
+    .profile-card h4 {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #171A1F;
+        margin-top: 1rem;
+    }
+    .profile-card p {
+        font-size: 14px;
+        color: #565D6D;
+        margin: 4px 0 0 0;
+    }
+
+    /* Center Column: Documents */
+    .documents-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .documents-header h3 {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0;
+    }
+    .btn-back-profile {
+        height: 40px;
+        padding: 0 16px;
+        background: rgba(16, 67, 135, 0.7);
+        color: #FFFFFF;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .document-list-card {
+        padding: 0;
+    }
+    .document-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .document-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px;
+        border-bottom: 1px solid #DEE1E6;
+        font-size: 16px;
+        font-weight: 600;
+        color: #171A1F;
+    }
+    .document-item:last-child {
+        border-bottom: none;
+    }
+    .document-status {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .status-tag {
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 9999px;
+    }
+    .status-uploaded {
+        background-color: #D1FAE5;
+        color: #065F46;
+    }
+    .status-pending {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+    .view-link {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #0F74C7;
+        text-decoration: none;
+    }
+    .view-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Right Column: Final Decision */
+    .decision-card {
+        padding: 24px;
+    }
+    .decision-card h3 {
+        font-family: 'Unbounded', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: #171A1F;
+        margin-bottom: 1rem;
+    }
+    .decision-card .form-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: #565D6D;
+    }
+    .decision-card textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    .decision-buttons {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .btn-decision {
+        height: 40px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .btn-approve {
+        color: #65A30D;
+        background-color: #F7FEE7;
+    }
+    .btn-approve:hover {
+        background-color: #ECFCCB;
+    }
+    .btn-reject {
+        color: #FFFFFF;
+        background-color: #DC2626;
+    }
+     .btn-reject:hover {
+        background-color: #B91C1C;
+    }
+    
+    /* --- NEW: POP-UP STYLES --- */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+    .popup-box {
+        width: 448px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 8.5px 13.75px rgba(23, 26, 31, 0.4), 0px 0px 2px rgba(23, 26, 31, 0.08);
+        text-align: center;
+        padding: 32px;
+        display: none; /* Hidden by default */
+    }
+    .popup-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+    }
+    .popup-icon-approve { color: #65A30D; } /* Green for approve */
+    .popup-icon-reject { color: #B0251A; } /* Red for reject */
+
+    .popup-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0 0 8px 0;
+    }
+    .popup-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        color: #565D6D;
+        margin-bottom: 2rem;
+    }
+    .btn-popup-action {
+        width: 100%;
+        height: 40px;
+        background: #104387;
+        color: #FFFFFF;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-popup-action:hover {
+        background: #0A2A55;
+        color: #FFFFFF;
+    }
 </style>
 
-<div class="container-fluid pt-4">
-    <div class="row">
-
-        <div class="col-lg-3">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body profile-card">
-                    <div class="profile-img-container">
-                        <img src="~/images/user_profile.png" alt="Employee Photo" class="rounded-circle profile-img">
-                        <span class="online-indicator"></span>
-                    </div>
-                    <h4 class="card-title mt-3">@($"{Model.Name} {Model.Surname}")</h4>
-                    <p class="text-muted mb-1">Employee ID: @Model.IdNumber</p>
-                    <p class="text-muted">Department: Human Resources</p> @* Assuming Department name needs to be fetched *@
-                </div>
-            </div>
+<div class="verification-page-container" id="mainContent">
+    
+    <div class="verification-card profile-card">
+        <div class="avatar-container">
+            <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Employee Photo" class="avatar-image">
+            <div class="online-indicator"></div>
         </div>
-
-        <div class="col-lg-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="font-weight-bold mb-0">Uploaded Documents</h3>
-                <a asp-controller="User" asp-action="Dashboard" class="btn btn-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-                    </svg>
-                    Back to Dashboard
-                </a>
-            </div>
-
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush document-list">
-                        <li class="list-group-item">
-                            <div>Proof of Identity/Passport</div>
-                            <div>
-                                <span class="badge bg-success me-3">Uploaded</span>
-                                <a href="#" class="text-primary text-decoration-none">View</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Proof of Address</div>
-                            <div>
-                                <span class="badge bg-warning text-dark me-3">Pending Review</span>
-                                <a href="#" class="text-primary text-decoration-none">View</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Education Certificate (Degree/Diploma)</div>
-                             <div>
-                                <span class="badge bg-success me-3">Uploaded</span>
-                                <a href="#" class="text-primary text-decoration-none">View</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Employment History (CV)</div>
-                             <div>
-                                <span class="badge bg-success me-3">Uploaded</span>
-                                <a href="#" class="text-primary text-decoration-none">View</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Bank Statement</div>
-                             <div>
-                                <span class="badge bg-warning text-dark me-3">Pending Review</span>
-                                <a href="#" class="text-primary text-decoration-none">View</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-             <h3 class="font-weight-bold mb-3">Final Decision</h3>
-             <div class="card shadow-sm border-0 decision-card">
-                 <div class="card-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="adminNotes" class="form-label text-muted">Administrator Notes</label>
-                            <textarea class="form-control" id="adminNotes" rows="6" placeholder="Add any relevant notes here..."></textarea>
-                        </div>
-                        <div class="d-grid gap-2">
-                             <button type="submit" class="btn btn-success">Approve Employee</button>
-                             <button type="submit" class="btn btn-danger">Reject Employee</button>
-                        </div>
-                    </form>
-                 </div>
-             </div>
-        </div>
-
+        <h4>@($"{Model.Name} {Model.Surname}")</h4>
+        <p>Employee ID: @Model.IdNumber</p>
+        <p>Department: Human Resources</p>
     </div>
+
+    <div>
+        <div class="documents-header">
+            <h3>Uploaded Documents</h3>
+            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-back-profile">
+                &leftarrow; Back to Profile
+            </a>
+        </div>
+        <div class="verification-card document-list-card">
+            <ul class="document-list">
+                <li class="document-item">
+                    <span>Proof of Identity/Passport</span>
+                    <div class="document-status">
+                        <span class="status-tag status-uploaded">Uploaded</span>
+                        <a href="#" class="view-link">View</a>
+                    </div>
+                </li>
+                <li class="document-item">
+                    <span>Proof of Address</span>
+                    <div class="document-status">
+                        <span class="status-tag status-pending">Pending Review</span>
+                        <a href="#" class="view-link">View</a>
+                    </div>
+                </li>
+                <li class="document-item">
+                    <span>Education Certificate</span>
+                    <div class="document-status">
+                        <span class="status-tag status-uploaded">Uploaded</span>
+                        <a href="#" class="view-link">View</a>
+                    </div>
+                </li>
+                <li class="document-item">
+                    <span>Employment History (CV)</span>
+                    <div class="document-status">
+                        <span class="status-tag status-uploaded">Uploaded</span>
+                        <a href="#" class="view-link">View</a>
+                    </div>
+                </li>
+                <li class="document-item">
+                    <span>Bank Statement</span>
+                    <div class="document-status">
+                        <span class="status-tag status-pending">Pending Review</span>
+                        <a href="#" class="view-link">View</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="verification-card decision-card">
+        <h3>Final Decision</h3>
+        <form>
+            <div class="mb-3">
+                <label for="adminNotes" class="form-label">Administrator Notes</label>
+                <textarea class="form-control" id="adminNotes" rows="5" placeholder="Add any relevant notes here..."></textarea>
+            </div>
+            <div class="decision-buttons">
+                 <button type="submit" class="btn-decision btn-approve" id="approveButton">Approve Employee</button>
+                 <button type="submit" class="btn-decision btn-reject" id="rejectButton">Reject Employee</button>
+            </div>
+        </form>
+    </div>
+
 </div>
+
+<div class="popup-overlay" id="popupOverlay">
+    
+    <div class="popup-box" id="approvePopup">
+        <div class="popup-icon popup-icon-approve">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+             </svg>
+        </div>
+        <h2 class="popup-title">Employee Approved!</h2>
+        <p class="popup-text">The employee's profile has been updated and marked as verified.</p>
+        <a asp-action="Dashboard" asp-controller="User" class="btn-popup-action">Back to Directory</a>
+    </div>
+
+    <div class="popup-box" id="rejectPopup">
+        <div class="popup-icon popup-icon-reject">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
+            </svg>
+        </div>
+        <h2 class="popup-title">Employee Rejected</h2>
+        <p class="popup-text">The employee's profile has been updated and marked as rejected.</p>
+        <a asp-action="Dashboard" asp-controller="User" class="btn-popup-action">Back to Directory</a>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const approveButton = document.getElementById('approveButton');
+            const rejectButton = document.getElementById('rejectButton');
+            const overlay = document.getElementById('popupOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const approvePopup = document.getElementById('approvePopup');
+            const rejectPopup = document.getElementById('rejectPopup');
+
+            function showPopup(popupToShow) {
+                // Hide both popups first to reset state
+                approvePopup.style.display = 'none';
+                rejectPopup.style.display = 'none';
+
+                // Show the correct popup
+                popupToShow.style.display = 'block';
+                
+                // Show overlay and blur background
+                overlay.style.display = 'flex';
+                mainContent.classList.add('blurred');
+            }
+
+            // Event listener for the Approve button
+            approveButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                showPopup(approvePopup);
+            });
+
+            // Event listener for the Reject button
+            rejectButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                showPopup(rejectPopup);
+            });
+        });
+    </script>
+}

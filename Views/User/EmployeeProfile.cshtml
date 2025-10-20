@@ -1,48 +1,426 @@
 @model VeriWork_Admin.Core.Entities.User
 
 @{
-    ViewBag.Title = "title";
+    ViewData["Title"] = "Employee Profile";
     Layout = "_Layout";
 }
 
-<div class="container mt-5 d-flex justify-content-center">
-    <div class="card p-3 w-75">
-        <div class="d-flex align-items-center">
-            <div class="image">
-                <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")"
-                     class="rounded-circle border border-2"
-                     width="155" height="155"
-                     alt="Profile Photo" />
-            </div>
+<style>
+    .profile-page-container {
+        font-family: 'Unbounded', sans-serif;
+        padding: 1rem 0;
+        /* --- NEW: Added for blur transition --- */
+        transition: filter 0.3s ease-in-out;
+    }
 
-            <div class="mx-3 w-100">
-                <h4 class="mb-0 mt-0">@Model.Name @Model.Surname</h4>
-                <span>@Model.Role</span><br />
-                <span>Employee ID: @Model.IdNumber</span>
-                <div class="button mt-2 d-flex flex-row gap-2">
-                    <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" 
-                       class="btn btn-sm btn-primary w-100">Update/Edit Info</a>                   
-                    <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.IdNumber" 
-                       class="btn btn-sm btn-primary w-100">Verify Status</a>
-                </div>
-            </div>
+    /* --- NEW: Class to apply blur --- */
+    .blurred {
+        filter: blur(5px);
+        pointer-events: none; /* Prevents interaction with blurred content */
+    }
+
+    /* Header Section */
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .avatar-container {
+        position: relative;
+    }
+
+    .avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .status-badge {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 38px;
+        height: 38px;
+        background: #65A30D;
+        border: 2.5px solid #FFFFFF;
+        border-radius: 50%;
+    }
+
+    .employee-details h1 {
+        font-size: 36px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0;
+    }
+
+    .employee-details .role {
+        font-size: 20px;
+        font-weight: 400;
+        color: #565D6D;
+        margin-top: 8px;
+    }
+
+    .employee-details .employee-id {
+        font-size: 16px;
+        font-weight: 400;
+        color: #565D6D;
+        margin-top: 5px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        margin-top: 24px;
+        display: flex;
+        gap: 24px;
+    }
+
+    .btn-profile-action {
+        height: 40px;
+        padding: 0 24px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #FFFFFF;
+        background: #2563EB;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-profile-action:hover {
+        background: #134CC9;
+        color: #FFFFFF;
+    }
+
+    /* Information Cards */
+    .info-cards-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 24px;
+    }
+
+    .info-card {
+        background: #FFFFFF;
+        border-radius: 10px;
+        padding: 24px;
+        box-shadow: 0px 0px 1px rgba(23,26,31,0.07), 0px 0px 2px rgba(23,26,31,0.12);
+    }
+
+    .info-card h4 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #171A1F;
+        margin-bottom: 20px;
+    }
+    .info-card p {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 0 0 12px 0;
+    }
+    .info-card p strong {
+        font-weight: 500;
+        color: #171A1F;
+    }
+    .status-tag-verified {
+        color: #059669;
+        font-weight: bold;
+    }
+
+    .btn-card-action {
+        width: 100%;
+        height: 40px;
+        margin-top: 12px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #171A1F;
+        background: #FFFFFF;
+        border: 1px solid #DEE1E6;
+        border-radius: 6px;
+    }
+    .btn-card-action:hover {
+        background: #F9FAFB;
+    }
+
+    /* Status History */
+    .status-history-container {
+        margin-top: 24px;
+    }
+    .history-item {
+        background: #FFFFFF;
+        padding: 16px 24px;
+        border-bottom: 1px solid #DEE1E6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .history-item:first-child {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+     .history-item:last-child {
+        border-bottom: none;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+    .history-item-details strong {
+        display: block;
+        font-size: 16px;
+        font-weight: 500;
+        color: #171A1F;
+    }
+     .history-item-details span {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        color: #565D6D;
+    }
+    .history-item-date {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #565D6D;
+    }
+
+    /* Delete Button */
+    .delete-section {
+        margin-top: 3rem;
+        text-align: right;
+    }
+    .btn-delete {
+        height: 40px;
+        padding: 0 24px;
+        font-family: 'Unbounded', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: #DC2626;
+        background: #FFFFFF;
+        border: 1px solid #DC2626;
+        border-radius: 6px;
+    }
+     .btn-delete:hover {
+        background: #FEF2F2;
+        color: #B91C1C;
+    }
+
+    /* --- NEW: POP-UP STYLES --- */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        z-index: 1050;
+    }
+    .popup-box {
+        width: 448px;
+        background: #FFFFFF;
+        border-radius: 10px;
+        box-shadow: 0px 8.5px 13.75px rgba(23, 26, 31, 0.4), 0px 0px 2px rgba(23, 26, 31, 0.08);
+        text-align: center;
+        padding: 32px;
+        display: none; /* Hidden by default */
+    }
+    .popup-icon {
+        width: 64px;
+        height: 64px;
+        color: #B0251A; /* Red color from image */
+        margin: 0 auto 16px;
+    }
+    .popup-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: #171A1F;
+        margin: 0 0 8px 0;
+    }
+    .popup-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        color: #565D6D;
+        margin-bottom: 3rem;
+    }
+    .popup-actions {
+        display: flex;
+        gap: 16px;
+    }
+    .btn-popup {
+        width: 100%;
+        height: 40px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-popup-confirm {
+        background: #104387;
+        color: #FFFFFF;
+    }
+    .btn-popup-confirm:hover {
+        background: #0A2A55;
+        color: #FFFFFF;
+    }
+    .btn-popup-cancel {
+        background: #B0251A;
+        color: #FFFFFF;
+    }
+    .btn-popup-cancel:hover {
+        background: #7B1912;
+    }
+</style>
+
+<div class="profile-page-container" id="mainContent">
+    <a asp-action="Dashboard" asp-controller="User" class="btn btn-outline-secondary mb-4">
+        &leftarrow; Back to Directory
+    </a>
+
+    <header class="profile-header">
+        <div class="avatar-container">
+            <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Profile Photo" class="avatar" />
+            <div class="status-badge"></div>
+        </div>
+        <div class="employee-details">
+            <h1>@Model.Name @Model.Surname</h1>
+            <div class="role">@Model.Position, Engineering</div>
+            <div class="employee-id">Employee ID: @Model.IdNumber</div>
+        </div>
+    </header>
+
+    <div class="action-buttons">
+        <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" class="btn-profile-action">Update/Edit Info</a>
+        <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.IdNumber" class="btn-profile-action">Verify Status</a>
+    </div>
+
+    <div class="info-cards-grid">
+        <div class="info-card">
+            <h4>Verification Status</h4>
+            <p><strong>Current Status:</strong> <span class="status-tag-verified">Verified</span></p>
+            <p><strong>Expiry Date:</strong> 2025-12-31</p>
+            <button class="btn-card-action">Check Documentation Status</button>
+        </div>
+        <div class="info-card">
+            <h4>Contact Information</h4>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Phone:</strong> @Model.Phone</p>
+            <p><strong>Address:</strong> @Model.Address</p>
         </div>
     </div>
+
+    <div class="status-history-container info-card">
+        <h4>Status History</h4>
+        <div class="history-item">
+            <div class="history-item-details">
+                <strong>Documents Approved</strong>
+                <span>All submitted documents passed review and verification requirements.</span>
+            </div>
+            <div class="history-item-date">2024-03-10</div>
+        </div>
+        <div class="history-item">
+            <div class="history-item-details">
+                <strong>Documents Submitted</strong>
+                <span>Identity, Address, and Employment proofs uploaded for verification.</span>
+            </div>
+            <div class="history-item-date">2024-03-05</div>
+        </div>
+        <div class="history-item">
+            <div class="history-item-details">
+                <strong>Profile Created</strong>
+            </div>
+            <div class="history-item-date">2024-03-01</div>
+        </div>
+    </div>
+    
+    <div class="delete-section">
+        <button class="btn-delete" id="deleteButton">Delete Employee</button>
+    </div>
 </div>
 
-<!-- Section 2 -->
-<div class="container mt-5 d-flex justify-content-center gap-2">
-    <div class="card p-3 w-50">
-        <h4>Verification Status</h4>
-        <p class="fw-bold">Current Status: <span class="text-danger">Not Verified</span></p>
-        <p>Expiry Date: Not set yet</p>
-        <button class="btn btn-sm btn-outline-primary w-100">Check Documentation Status</button>
+<div class="popup-overlay" id="popupOverlay">
+    
+    <div class="popup-box" id="confirmDeletePopup">
+        <div class="popup-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+             </svg>
+        </div>
+        <h2 class="popup-title">Are you sure?</h2>
+        <p class="popup-text">The employee's profile information will be deleted from the database.</p>
+        <div class="popup-actions">
+            <button class="btn-popup btn-popup-confirm" id="confirmDeleteButton">Delete Employee Profile</button>
+            <button class="btn-popup btn-popup-cancel" id="cancelDeleteButton">Cancel</button>
+        </div>
     </div>
 
-    <div class="card p-3 w-50">
-        <h4>Contact Information</h4>
-        <p>Email: @Model.Email</p>
-        <p>Phone: @Model.Phone</p>
-        <p>Address: @Model.Address</p>
+    <div class="popup-box" id="deleteSuccessPopup">
+        <div class="popup-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+        </div>
+        <h2 class="popup-title">Employee Deleted Successfully!</h2>
+        <p class="popup-text">The employee's profile information has been deleted successfully.</p>
+        <a asp-action="Dashboard" asp-controller="User" class="btn-popup btn-popup-confirm">Back to Dashboard</a>
     </div>
+
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButton = document.getElementById('deleteButton');
+            const overlay = document.getElementById('popupOverlay');
+            const mainContent = document.getElementById('mainContent');
+            const confirmPopup = document.getElementById('confirmDeletePopup');
+            const successPopup = document.getElementById('deleteSuccessPopup');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteButton');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteButton');
+
+            function showConfirmationPopup() {
+                overlay.style.display = 'flex';
+                confirmPopup.style.display = 'block';
+                successPopup.style.display = 'none';
+                mainContent.classList.add('blurred');
+            }
+
+            function showSuccessPopup() {
+                confirmPopup.style.display = 'none';
+                successPopup.style.display = 'block';
+            }
+
+            function closePopup() {
+                overlay.style.display = 'none';
+                mainContent.classList.remove('blurred');
+            }
+
+            deleteButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                showConfirmationPopup();
+            });
+
+            cancelDeleteBtn.addEventListener('click', closePopup);
+            
+            confirmDeleteBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                // In a real app, you would make an AJAX call to the server here to delete the employee.
+                // For this simulation, we just switch to the success pop-up.
+                showSuccessPopup();
+            });
+        });
+    </script>
+}
