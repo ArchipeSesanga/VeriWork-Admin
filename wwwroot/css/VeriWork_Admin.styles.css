@@ -102,3 +102,178 @@ a:link {
 }
 
 /* Login Screen */
+
+/* General Body and Page Setup */
+body.login-page-body { /* Using a more specific class to avoid conflicts */
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    min-height: 100vh;
+    background: #F1F8FE;
+    overflow-y: auto;
+}
+
+.login-header {
+    width: 100%;
+    height: 64px;
+    background: #104387;
+    flex-shrink: 0;
+}
+
+.login-header-logo {
+    position: absolute;
+    top: 13px;
+    left: 27px;
+    width: 61px;
+    height: 38px;
+}
+
+.login-container {
+    margin: auto;
+    width: 448px;
+    max-width: 95%;
+    height: auto;
+    padding-bottom: 40px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0px 0px 2px #171a1f00, 0px 0px 4px #171a1f14;
+}
+
+/* Form Elements */
+.login-form {
+    position: relative;
+    width: 100%;
+    padding: 0 30px 75px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.login-form-logo {
+    margin-top: 15px;
+    width: 107px;
+    height: 78px;
+}
+
+.login-form-welcome-text {
+    margin-top: 12px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 700;
+    color: #171A1F;
+}
+
+.login-form-welcome-subtext {
+    margin-top: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #565D6DFF;
+}
+
+/* Textbox Styling */
+.textbox {
+    margin-top: 38px;
+    text-align: left;
+}
+
+.textbox .label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 500;
+    color: #171A1F;
+}
+
+.textbox input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: #FFFFFF;
+    border-radius: 6px;
+    border: 1px solid #DEE1E6;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.textbox input.input-error {
+    border-color: #DC2626;
+}
+
+.textbox input.input-error:hover {
+    border-color: #B51E1E;
+}
+
+.textbox input.input-error:focus {
+    border-color: #DC2626;
+}
+
+.error-message {
+    margin-top: 9px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: #DC2626;
+}
+
+/* Forgot Password Link */
+.forgot-password-text {
+    display: block;
+    margin-top: 9px;
+    text-align: right;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: #0F74C7;
+    text-decoration: none;
+}
+
+.forgot-password-text:hover {
+    text-decoration: underline;
+}
+
+/* Button Styling */
+.login-button {
+    margin-top: 23px;
+    width: 100%;
+    height: 40px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #FFFFFF;
+    background: #0F74C7;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background: #0A4D84;
+}
+
+/* Bottom Text */
+.login-form-bottom-text {
+    margin-top: 41px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #565D6DFF;
+}
+
+.login-form-bottom-text a {
+    font-family: 'Inter', sans-serif;
+    color: #0F74C7;
+    text-decoration: none;
+}
