@@ -1,4 +1,4 @@
-@model VeriWork_Admin.Core.Entities.User
+@model VeriWork_Admin.Core.Entities.LoginModel
 
 @{
     ViewBag.Title = "title";
@@ -201,7 +201,7 @@
         </header>
 
         <div class="login-container">
-            <form class="login-form" asp-controller="User" asp-action="Login" method="post">
+            <form class="login-form" asp-controller="Auth" asp-action="Login" method="post">
                 <img src="~/images/black_logo.png" class="login-form-logo" alt="Logo">
                 
                 <h1 class="login-form-welcome-text">Welcome to VeriWork</h1>
