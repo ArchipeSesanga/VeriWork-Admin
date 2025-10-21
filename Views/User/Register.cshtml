@@ -314,13 +314,15 @@
                     <span asp-validation-for="IdNumber"></span>
                 </div>
                 <div class="form-group">
-                    <label>Gender</label>
-                    <select class="form-control">
-                        <option>Select gender</option>
-                        <option>Male</option>
-                        <option>Female</option>
-                        <option>Prefer not to say</option>
+                    <label asp-for="Gender">Gender</label>
+                    
+                    <select asp-for="Gender" class="form-control">
+                        <option  value="">Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Prefer not say">Prefer not to say</option>
                     </select>
+                    <span asp-validation-for="Gender"></span>
                 </div>
             </div>
         </section>
@@ -340,13 +342,15 @@
                 </div>
                  <div class="form-group">
                     <label>Hire Date</label>
-                    <input type="date" class="form-control" />
+                    <input asp-for="HireDate" type="date" class="form-control" />
+                    <span asp-validation-for="HireDate"></span>
                 </div>
                  <div class="form-group">
-                    <label>Manager</label>
-                    <select class="form-control">
-                        <option>Select manager</option>
-                        <option>Jane Smith</option>
+                    <label>Role</label>
+                    <select asp-for="Role" class="form-control">
+                        <option value="" >Select Role</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Employee">Employee</option>
                     </select>
                 </div>
             </div>
@@ -366,12 +370,14 @@
                     <span asp-validation-for="Phone"></span>
                 </div>
                  <div class="form-group">
-                    <label>Emergency Contact Name</label>
-                    <input class="form-control" placeholder="e.g. Jane Doe" />
+                    <label asp-for="EmergencyName">Emergency Contact Name</label>
+                    <input asp-for="EmergencyName" class="form-control" placeholder="e.g. Jane Doe" />
+                    <span asp-validation-for="EmergencyName"></span>
                 </div>
                  <div class="form-group">
-                    <label>Emergency Contact Phone</label>
-                    <input class="form-control" placeholder="e.g. +27 (012) 987-6543" />
+                    <label asp-for="EmergencyPhone">Emergency Contact Phone</label>
+                    <input asp-for="EmergencyPhone" class="form-control" placeholder="e.g. +27 (012) 987-6543" />
+                    <span asp-validation-for="EmergencyPhone"></span>
                 </div>
             </div>
         </section>
@@ -385,53 +391,82 @@
                     <span asp-validation-for="Address"></span>
                 </div>
                  <div class="form-group">
-                    <label>City</label>
-                    <input class="form-control" placeholder="e.g. Anytown" />
+                    <label asp-for="City">City</label>
+                    <input asp-for="City" class="form-control" placeholder="e.g. Anytown" />
+                    <span asp-validation-for="City"></span>
                 </div>
             </div>
              <div class="form-grid">
                  <div class="form-group">
-                    <label>Province</label>
-                    <select class="form-control">
-                        <option>Select Province</option>
-                        <option>Eastern Cape</option>
-                        <option>Free State</option>
-                        <option>Gauteng</option>
-                        <option>KwaZulu-Natal</option>
-                        <option>Limpopo</option>
-                        <option>Mpumalanga</option>
-                        <option>North West</option>
-                        <option>Northern Cape</option>
-                        <option>Western Cape</option>
+                    <label asp-for="Province">Province</label>
+                    <select asp-for="Province" class="form-control">
+                        <option value="">Select Province</option>
+                        <option value="Eastern Cape">Eastern Cape</option>
+                        <option value="Free State">Free State</option>
+                        <option value="Gauteng">Gauteng</option>
+                        <option value="Kwazulu-Natal">KwaZulu-Natal</option>
+                        <option value="Limpopo">Limpopo</option>
+                        <option value="Mpumalanga">Mpumalanga</option>
+                        <option value="North West">North West</option>
+                        <option value="Nothern Cape">Northern Cape</option>
+                        <option value="Western Cape">Western Cape</option>
                     </select>
+                    <span asp-validation-for="Province"></span>
                 </div>
                  <div class="form-group">
                     <label>Postal Code</label>
-                    <input class="form-control" placeholder="e.g. 90210" />
+                    <input asp-for="PostalCode" class="form-control" placeholder="e.g. 90210" />
+                    <span asp-validation-for="PostalCode"></span>
                 </div>
-                <div class="form-group">
-                    <label>Country</label>
-                    <select class="form-control">
-                        <option>Select Country</option>
-                        <option>South Africa</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-            </div>
+                 <div class="form-group">
+                     <label asp-for="Country">Country</label>
+                     <select asp-for="Country" class="form-control">
+                         <option value="">Select Country</option>
+                         <option value="South Africa">South Africa</option>
+                         <option value="Other">Other</option>
+                     </select>
+                     <span asp-validation-for="Country" class="text-danger"></span>
+                 </div>
+
+             </div>
         </section>
 
         <section class="form-section">
             <h2 class="form-section-title">Documents</h2>
-            <div class="document-upload-container">
+            <div class="document-upload-container" id="documentUploadContainer">
                 <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
                 </svg>
                 <p>Drag & Drop files here or click to upload</p>
-                 <div class="upload-info">Supported file types: PDF, DOCX, JPG, PNG. Max size: 5MB.</div>
-                 <button type="button" class="btn-upload mt-3">Upload Documents</button>
+                <div class="upload-info">Supported file types: PDF, DOCX, JPG, PNG. Max size: 5MB.</div>
+
+                <input asp-for="Documents" type="file" id="documentInput" class="visually-hidden" multiple />
+                <button type="button" class="btn-upload mt-3" id="uploadBtn">Upload Documents</button>
+                <span asp-validation-for="Documents" class="text-danger"></span>
             </div>
         </section>
+
+        <section class="form-section">
+            <h2 class="form-section-title">Account Security</h2>
+            <div class="form-grid">
+                <!-- Password -->
+                <div class="form-group">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password" type="password" placeholder="Enter password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+        </section>
+       
+
 
         <div class="form-actions">
             <button type="reset" class="btn-form btn-reset">Reset Form</button>
@@ -440,22 +475,32 @@
     </form>
 </div>
 
-<div class="popup-overlay" id="popupOverlay">
-    <div class="popup-box">
-        <div class="popup-icon">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-             </svg>
-        </div>
-        <h2 class="popup-title">Employee Registration Successful!</h2>
-        <p class="popup-text">The new employee's profile has been created successfully.</p>
-        <a asp-action="Dashboard" asp-controller="User" class="btn-popup-action">View Employee Profile</a>
-    </div>
-</div>
 
 @section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // ----- Document upload -----
+            const uploadBtn = document.getElementById('uploadBtn');
+            const documentInput = document.getElementById('documentInput');
+            const container = document.getElementById('documentUploadContainer');
+
+            uploadBtn.addEventListener('click', () => documentInput.click());
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                container.style.borderColor = '#104387';
+            });
+            container.addEventListener('dragleave', () => {
+                container.style.borderColor = '#DEE1E6';
+            });
+            container.addEventListener('drop', (e) => {
+                e.preventDefault();
+                documentInput.files = e.dataTransfer.files;
+                container.style.borderColor = '#DEE1E6';
+            });
+
+            // ----- Profile photo preview -----
             const photoUpload = document.getElementById('photoUpload');
             const avatarPreview = document.getElementById('avatarPreview');
             const avatarPlaceholder = document.getElementById('avatarPlaceholder');
@@ -473,15 +518,15 @@
                 }
             });
 
+            // ----- Optional overlay logic -----
             const registerForm = document.getElementById('registerForm');
             const overlay = document.getElementById('popupOverlay');
             const mainContent = document.getElementById('mainContent');
 
             registerForm.addEventListener('submit', function (event) {
+                // ✅ Remove preventDefault if backend handles redirect
                 if (registerForm.checkValidity()) {
-                    event.preventDefault(); 
-                    overlay.style.display = 'flex';
-                    mainContent.classList.add('blurred');
+                    
                 }
             });
         });
