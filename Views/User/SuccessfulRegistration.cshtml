@@ -1,8 +1,26 @@
-@model dynamic
-
 @{
-    ViewBag.Title = "title";
+    ViewData["Title"] = "Registration Successful";
     Layout = "_Layout";
 }
 
-<h2>Successful registration</h2>
+<style>
+   
+</style>
+
+
+<div class="popup-overlay">
+    <div class="popup-box">
+        <div class="popup-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
+        </div>
+        <h2 class="popup-title">Employee Registration Successful!</h2>
+        <p class="popup-text">The new employee's profile has been created successfully in the database.</p>
+
+        <div class="d-flex flex-column gap-2">
+            <a asp-action="Dashboard" asp-controller="User" class="btn-popup-action">View All Employees</a>
+            <a asp-action="Register" asp-controller="User" class="btn-popup-action" style="background: #198754;">Add Another Employee</a>
+        </div>
+    </div>
+</div>

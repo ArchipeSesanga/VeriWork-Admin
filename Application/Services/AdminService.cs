@@ -18,13 +18,15 @@ namespace VeriWork_Admin.Application.Services
         }
 
         /// <summary>
-        /// Register new user in the database. 
+        /// Registers a new user in the Firestore database. 
         /// Admins are saved in both 'Users' and 'Admins' collections.
         /// </summary>
         public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
         {
+            // Hash password for security
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
+            // Build user object
             var user = new User
             {
                 IdNumber = model.IdNumber,
@@ -34,46 +36,64 @@ namespace VeriWork_Admin.Application.Services
                 Address = model.Address,
                 Email = model.Email,
                 PasswordHash = hashedPassword,
-                Role = model.Role, // Use Role from model instead of fixed parameter
+                Role = model.Role ?? role, // fallback to default role if null
                 DepartmentId = model.DepartmentId,
                 PhotoUrl = photoUrl,
                 Position = model.Position
             };
 
-            // Save in "Users" collection (every registered person)
+            // Add optional document URLs if provided
+            if (model.DocumentUrls != null && model.DocumentUrls.Any())
+            {
+                user.DocumentUrls = model.DocumentUrls;
+            }
+
+            // Save to "Users" collection (default for all users)
             await _userRepository.AddUserAsync(user);
 
-            // If the role is Admin, also save in "Admins" collection
-            if (model.Role != null && model.Role.ToLower() == "admin")
+            // If the role is Admin, also save to "Admins" collection
+            if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
             {
                 var adminCollection = _db.Collection("Admins");
-                await adminCollection.Document(model.IdNumber).SetAsync(user);
+                await adminCollection.Document(user.IdNumber).SetAsync(user);
             }
         }
 
+        /// <summary>
+        /// Authenticates an admin by verifying their credentials.
+        /// </summary>
         public async Task<User?> AuthenticateAsync(string email, string password)
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
 
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                if (user.Role.ToLower() == "admin")
+                if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
                     return user;
             }
 
             return null;
         }
 
+        /// <summary>
+        /// Retrieves a user profile by ID number.
+        /// </summary>
         public async Task<User?> GetProfileAsync(string idNumber)
         {
             return await _userRepository.GetUserByIdAsync(idNumber);
         }
 
+        /// <summary>
+        /// Updates an existing user profile in the database.
+        /// </summary>
         public async Task UpdateProfileAsync(User updatedUser)
         {
             await _userRepository.UpdateUserAsync(updatedUser);
         }
 
+        /// <summary>
+        /// Fetches all users from the Firestore database.
+        /// </summary>
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await _userRepository.GetAllUsersAsync();

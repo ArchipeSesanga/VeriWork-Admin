@@ -25,10 +25,12 @@ public class UserController : Controller
     }
     [HttpGet]
     public IActionResult Register() => View();
+    
+    
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
-        //Use: Register new employee into Firebase database
+        // 1️⃣ Validate form
         if (!ModelState.IsValid)
         {
             var errors = ModelState
@@ -42,19 +44,44 @@ public class UserController : Controller
             return View(model);
         }
 
+        // 2️⃣ Upload profile photo
         string? photoUrl = null;
 
         if (model.Photo != null && model.Photo.Length > 0)
         {
-            var fileName = $"{Guid.NewGuid()}_{photo.FileName}";
-            photoUrl = await _storageService.UploadFileAsync(photo, fileName);
+            var photoFileName = $"{Guid.NewGuid()}_{model.Photo.FileName}";
+            var photoPath = $"uploads/{model.IdNumber}/profile/{photoFileName}";
+            photoUrl = await _storageService.UploadFileAsync(model.Photo, photoPath);
         }
 
+        // 3️⃣ Upload documents (if any)
+        var documentUrls = new List<string>();
+        if (model.Documents != null && model.Documents.Any())
+        {
+            foreach (var doc in model.Documents)
+            {
+                if (doc.Length > 0)
+                {
+                    var docFileName = $"{Guid.NewGuid()}_{doc.FileName}";
+                    var docPath = $"uploads/{model.IdNumber}/documents/{docFileName}";
+                    var docUrl = await _storageService.UploadFileAsync(doc, docPath);
+                    documentUrls.Add(docUrl);
+                }
+            }
+        }
+
+        // Store document URLs in model
+        model.DocumentUrls = documentUrls;
+
+        // 4️⃣ Save to Firestore
         await _adminService.Register(model, photoUrl);
 
+        // 5️⃣ If user is Admin → also store in "Admins" collection
 
+        // 6️⃣ Redirect to confirmation page
         return RedirectToAction("SuccessfulRegistration");
     }
+
     
     public IActionResult Login()
     {

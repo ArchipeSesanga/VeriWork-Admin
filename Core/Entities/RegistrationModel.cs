@@ -24,6 +24,10 @@ public class RegistrationModel : User
         [Required(ErrorMessage = "Profile photo is required")]
         
         public IFormFile Photo { get; set; }
-    
-    
+        public List<IFormFile>? Documents { get; set; }
+
+       
+        public List<string>? DocumentUrls { get; set; } = new List<string>();
+        // Will hold download URLs after upload
+     
 }
