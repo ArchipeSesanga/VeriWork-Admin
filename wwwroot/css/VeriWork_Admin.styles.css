@@ -1,38 +1,3 @@
-body {
-    font-family: 'Unbounded', sans-serif, Tahoma, sans-serif;
-    background-color: #f8f9fa;
-   
-}
-
-.navbar {
-    height: 70px;
-}
-
-#grad {
-    background-image: url(/images/sidebackground.png);
-    background-image: linear-gradient(white, grey);
-}
-
-.nav-link {
-    color: black;
-}
-
-a:link {
-    text-decoration: none;
-}
-
-.user-profile {
-    height: 200px;
-}
-
-.emp-profile {
-    width: 200px;
-}
-
-.bg-color {
-    background-color: #F1F8FE;
-}
-
 /* Tshwaro Styles */
 
 /* Login Screen */
