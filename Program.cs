@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddSingleton(provider =>
     new FirebaseStorageService(projectId, bucketName, credentialPath));
+builder.Services.AddScoped<AuditLogService>();
 
 var app = builder.Build();
 
