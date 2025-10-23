@@ -2,6 +2,7 @@ using VeriWork_Admin.Application.Models;
 using VeriWork_Admin.Core.Entities;
 using VeriWork_Admin.Core.Interfaces;
 using BCrypt.Net;
+using FirebaseAdmin.Auth;
 using Google.Cloud.Firestore;
 
 namespace VeriWork_Admin.Application.Services
@@ -18,15 +19,15 @@ namespace VeriWork_Admin.Application.Services
         }
 
         /// <summary>
-        /// Registers a new user in the Firestore database. 
-        /// Admins are saved in both 'Users' and 'Admins' collections.
+        /// Registers a new user in Firebase Authentication and Firestore.
+        /// Admins are also stored in the 'Admins' collection.
         /// </summary>
         public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
         {
             // Hash password for security
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-            // Build user object
+            // Build user entity
             var user = new User
             {
                 IdNumber = model.IdNumber,
@@ -36,7 +37,7 @@ namespace VeriWork_Admin.Application.Services
                 Address = model.Address,
                 Email = model.Email,
                 PasswordHash = hashedPassword,
-                Role = model.Role ?? role, // fallback to default role if null
+                Role = model.Role ?? role,
                 DepartmentId = model.DepartmentId,
                 PhotoUrl = photoUrl,
                 Position = model.Position
@@ -48,10 +49,29 @@ namespace VeriWork_Admin.Application.Services
                 user.DocumentUrls = model.DocumentUrls;
             }
 
-            // Save to "Users" collection (default for all users)
+            // ✅ Create Firebase Authentication account
+            try
+            {
+                var userRecordArgs = new UserRecordArgs
+                {
+                    Email = model.Email,
+                    Password = model.Password,
+                    DisplayName = $"{model.Name} {model.Surname}",
+                    Disabled = false
+                };
+
+                await FirebaseAuth.DefaultInstance.CreateUserAsync(userRecordArgs);
+            }
+            catch (FirebaseAuthException ex)
+            {
+                Console.WriteLine($"[Firebase Auth] Error creating user: {ex.Message}");
+                throw new Exception("Failed to create Firebase authentication user.");
+            }
+
+            // ✅ Save user to Firestore "Users" collection
             await _userRepository.AddUserAsync(user);
 
-            // If the role is Admin, also save to "Admins" collection
+            // ✅ If the user is an Admin, also store in "Admins" collection
             if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
             {
                 var adminCollection = _db.Collection("Admins");

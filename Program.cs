@@ -1,4 +1,6 @@
 using Google.Cloud.Firestore;
+using Google.Apis.Auth.OAuth2;
+using FirebaseAdmin;
 using VeriWork_Admin.Application.Services;
 using VeriWork_Admin.Core.Interfaces;
 using VeriWork_Admin.Infrastructure.Config;
@@ -6,28 +8,42 @@ using VeriWork_Admin.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Firestore setup
+// === FIREBASE CONFIG ===
 string projectId = "veriwork-database";
 string credentialPath = Path.Combine(Directory.GetCurrentDirectory(), "Infrastructure/Config/service-account.json");
 string bucketName = "veriwork-database.firebasestorage.app";
 
+// Initialize Firestore
 FirestoreDb db = FirebaseInitializer.Initialize(projectId, credentialPath);
 
-// Add services to the container
-builder.Services.AddControllersWithViews();
-builder.Services.AddSession(); // enable session support
+// ✅ Initialize Firebase Admin SDK (required for Firebase Authentication)
+if (FirebaseApp.DefaultInstance == null)
+{
+    FirebaseApp.Create(new AppOptions()
+    {
+        Credential = GoogleCredential.FromFile(credentialPath)
+    });
+}
 
-// Dependency Injection
+// === SERVICES & DEPENDENCIES ===
+builder.Services.AddControllersWithViews();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(20);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddSingleton(db);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddSingleton(provider =>
     new FirebaseStorageService(projectId, bucketName, credentialPath));
-builder.Services.AddScoped<AuditLogService>();
 
+// === MIDDLEWARE ===
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -39,7 +55,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession(); // use session middleware
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(

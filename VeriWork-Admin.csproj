@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="Firebase.Auth" Version="1.0.0" />
       <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
       <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
       <PackageReference Include="Google.Apis.Auth" Version="1.72.0" />
