@@ -74,15 +74,17 @@ public class UserController : Controller
 
         // Store document URLs in model
         model.DocumentUrls = documentUrls;
-        await _auditLogService.AddLogAsync(User.Identity.Name ?? "Unknown Admin", "Register", $"Registered new user {model.Name} {model.Surname}");
 
         // 4️⃣ Save to Firestore
         await _adminService.Register(model, photoUrl);
-
         // 5️⃣ If user is Admin → also store in "Admins" collection
+        
+        // create the audit Log after succesful registration
+        await _auditLogService.AddLogAsync(User.Identity.Name ?? "Unknown Admin", "Register", $"Registered new user: {model.Name} {model.Surname}");
 
         // 6️⃣ Redirect to confirmation page
         return RedirectToAction("SuccessfulRegistration");
+        
     }
 
     

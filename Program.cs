@@ -1,6 +1,7 @@
 using Google.Cloud.Firestore;
 using Google.Apis.Auth.OAuth2;
 using FirebaseAdmin;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using VeriWork_Admin.Application.Services;
 using VeriWork_Admin.Core.Interfaces;
 using VeriWork_Admin.Infrastructure.Config;
@@ -41,6 +42,14 @@ builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddSingleton(provider =>
     new FirebaseStorageService(projectId, bucketName, credentialPath));
 builder.Services.AddScoped<FirebaseAuthService>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login";
+        options.LogoutPath = "/Auth/Logout";
+    });
+
+
 
 // === MIDDLEWARE ===
 var app = builder.Build();
@@ -51,6 +60,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

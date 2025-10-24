@@ -6,13 +6,12 @@ namespace VeriWork_Admin.Controllers;
 
 public class AuditController : Controller
 {
-    private readonly ILogger<AuditController> _logger;
     private readonly AuditLogService _auditLogService;
     private readonly FirebaseStorageService _firebaseStorageService;
 
-    public AuditController(ILogger<AuditController> logger, AuditLogService auditLogService)
+    public AuditController(AuditLogService auditLogService, FirebaseStorageService firebaseStorageService)
     {
-        _logger = logger;
+        _firebaseStorageService = firebaseStorageService;
         _auditLogService = auditLogService;
     }
 
