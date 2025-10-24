@@ -40,6 +40,7 @@ builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddSingleton(provider =>
     new FirebaseStorageService(projectId, bucketName, credentialPath));
+builder.Services.AddScoped<FirebaseAuthService>();
 
 // === MIDDLEWARE ===
 var app = builder.Build();
