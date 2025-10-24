@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VeriWork_Admin.Core.Entities;
+namespace VeriWork_Admin.Application.Models;
 
-public class LoginModel
+public class LoginViewModel
 {
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]

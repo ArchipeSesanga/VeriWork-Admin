@@ -1,4 +1,4 @@
-@model VeriWork_Admin.Core.Entities.LoginModel
+@model VeriWork_Admin.Application.Models.LoginViewModel
 
 @{
     ViewBag.Title = "Login";
@@ -44,15 +44,23 @@
                 </div>
 
                 <div class="textbox">
-                    <label for="Password" class="label">Password</label>
-                    <input name="Password" id="Password" type="password" class="@errorClass" placeholder="Enter your password" required>
+                    <label asp-for="Password" class="label">Password</label>
+                    <input asp-for="Password" type="password" class="@errorClass" placeholder="Enter your password" required>
+
                 </div>
                 
-                <div asp-validation-summary="ModelOnly" class="error-message"></div>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                 <a href="#" class="forgot-password-text">Forgot Password?</a>
 
                 <button class="login-button" type="submit">Sign in</button>
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger mt-3" role="alert">
+                        @ViewBag.Error
+                    </div>
+                }
+
 
                 <p class="login-form-bottom-text">
                     By clicking “Sign in”, you agree to our <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.

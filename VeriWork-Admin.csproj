@@ -9,11 +9,14 @@
 
     <ItemGroup>
       <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="Firebase.Auth" Version="1.0.0" />
       <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
       <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
       <PackageReference Include="Google.Apis.Auth" Version="1.72.0" />
       <PackageReference Include="Google.Cloud.Firestore" Version="3.11.0" />
       <PackageReference Include="Google.Cloud.Storage.V1" Version="4.13.0" />
+      <PackageReference Include="itext.bouncy-castle-adapter" Version="9.3.0" />
+      <PackageReference Include="itext7" Version="9.3.0" />
     </ItemGroup>
 
     <ItemGroup>

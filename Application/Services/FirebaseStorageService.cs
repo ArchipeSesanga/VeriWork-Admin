@@ -55,5 +55,18 @@ namespace VeriWork_Admin.Application.Services
                 throw new Exception($"File upload failed: {ex.Message}");
             }
         }
+        
+        public async Task<string> UploadAuditPdfAsync(string filePath, string month)
+        {
+            var fileName = $"audit-reports/{month}/AuditLogs_{month}.pdf";
+
+            // Read file into a stream, then wrap it into a FormFile to match UploadFileAsync signature
+            using var stream = File.OpenRead(filePath);
+            var formFile = new FormFile(stream, 0, stream.Length, "file", Path.GetFileName(filePath));
+
+            return await UploadFileAsync(formFile, fileName);
+        }
+
+
     }
 }

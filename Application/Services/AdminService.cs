@@ -2,6 +2,7 @@ using VeriWork_Admin.Application.Models;
 using VeriWork_Admin.Core.Entities;
 using VeriWork_Admin.Core.Interfaces;
 using BCrypt.Net;
+using FirebaseAdmin.Auth;
 using Google.Cloud.Firestore;
 
 namespace VeriWork_Admin.Application.Services
@@ -18,46 +19,69 @@ namespace VeriWork_Admin.Application.Services
         }
 
         /// <summary>
-        /// Registers a new user in the Firestore database. 
-        /// Admins are saved in both 'Users' and 'Admins' collections.
+        /// Registers a new user in Firebase Authentication and Firestore.
+        /// Admins are also stored in the 'Admins' collection.
         /// </summary>
-        public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
+       public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
+{
+    // Hash password for security
+    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+    // Build full user entity
+    var user = new User
+    {
+        IdNumber = model.IdNumber,
+        Name = model.Name,
+        Surname = model.Surname,
+        Phone = model.Phone,
+        Address = model.Address,
+        City = model.City,
+        Province = model.Province,
+        Country = model.Country,
+        PostalCode = model.PostalCode,
+        Gender = model.Gender,
+        EmergencyName = model.EmergencyName,
+        EmergencyPhone = model.EmergencyPhone,
+        HireDate = model.HireDate, 
+        Email = model.Email,
+        PasswordHash = hashedPassword,
+        Role = model.Role ?? role,
+        DepartmentId = model.DepartmentId,
+        PhotoUrl = photoUrl,
+        Position = model.Position,
+        DocumentUrls = model.DocumentUrls ?? new List<string>()
+    };
+
+    // ✅ Create Firebase Authentication user
+    try
+    {
+        var userRecordArgs = new UserRecordArgs
         {
-            // Hash password for security
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            Email = model.Email,
+            Password = model.Password,
+            DisplayName = $"{model.Name} {model.Surname}",
+            Disabled = false
+        };
 
-            // Build user object
-            var user = new User
-            {
-                IdNumber = model.IdNumber,
-                Name = model.Name,
-                Surname = model.Surname,
-                Phone = model.Phone,
-                Address = model.Address,
-                Email = model.Email,
-                PasswordHash = hashedPassword,
-                Role = model.Role ?? role, // fallback to default role if null
-                DepartmentId = model.DepartmentId,
-                PhotoUrl = photoUrl,
-                Position = model.Position
-            };
+        await FirebaseAuth.DefaultInstance.CreateUserAsync(userRecordArgs);
+    }
+    catch (FirebaseAuthException ex)
+    {
+        Console.WriteLine($"[Firebase Auth] Error creating user: {ex.Message}");
+        throw new Exception("Failed to create Firebase authentication user.");
+    }
 
-            // Add optional document URLs if provided
-            if (model.DocumentUrls != null && model.DocumentUrls.Any())
-            {
-                user.DocumentUrls = model.DocumentUrls;
-            }
+    // ✅ Save user to Firestore "Users" collection
+    await _userRepository.AddUserAsync(user);
 
-            // Save to "Users" collection (default for all users)
-            await _userRepository.AddUserAsync(user);
+    // ✅ If the user is an Admin, also store in "Admins" collection
+    if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+    {
+        var adminCollection = _db.Collection("Admins");
+        await adminCollection.Document(user.IdNumber).SetAsync(user);
+    }
+}
 
-            // If the role is Admin, also save to "Admins" collection
-            if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
-            {
-                var adminCollection = _db.Collection("Admins");
-                await adminCollection.Document(user.IdNumber).SetAsync(user);
-            }
-        }
 
         /// <summary>
         /// Authenticates an admin by verifying their credentials.

@@ -88,7 +88,7 @@ public class User
     
     [FirestoreProperty]
     [Required(ErrorMessage = "Date is required.")]
-    public string HireDate { get; set; }
+    public String HireDate { get; set; }
     [FirestoreProperty]
     public List<string>? DocumentUrls { get; set; } = new List<string>();
 

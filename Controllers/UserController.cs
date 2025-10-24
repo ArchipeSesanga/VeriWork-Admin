@@ -8,11 +8,13 @@ public class UserController : Controller
 {
     private readonly AdminService _adminService;
     private readonly FirebaseStorageService _storageService;
+    private readonly AuditLogService _auditLogService;
 
-    public UserController(AdminService adminService, FirebaseStorageService storageService)
+    public UserController(AdminService adminService, FirebaseStorageService storageService, AuditLogService auditLogService)
     {
         _adminService = adminService;
         _storageService = storageService;
+        _auditLogService = auditLogService;
     }
 
     [HttpGet]
@@ -75,11 +77,14 @@ public class UserController : Controller
 
         // 4️⃣ Save to Firestore
         await _adminService.Register(model, photoUrl);
-
         // 5️⃣ If user is Admin → also store in "Admins" collection
+        
+        // create the audit Log after succesful registration
+        await _auditLogService.AddLogAsync(User.Identity.Name ?? "Unknown Admin", "Register", $"Registered new user: {model.Name} {model.Surname}");
 
         // 6️⃣ Redirect to confirmation page
         return RedirectToAction("SuccessfulRegistration");
+        
     }
 
     
