@@ -1,6 +1,8 @@
+using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
 using VeriWork_Admin.Application.Models;
 using VeriWork_Admin.Application.Services;
+using VeriWork_Admin.Core.Entities;
 
 namespace VeriWork_Admin.Controllers;
 
@@ -9,44 +11,32 @@ public class UserController : Controller
     private readonly AdminService _adminService;
     private readonly FirebaseStorageService _storageService;
     private readonly AuditLogService _auditLogService;
+    private readonly FirestoreDb _db;
 
-    public UserController(AdminService adminService, FirebaseStorageService storageService, AuditLogService auditLogService)
+    public UserController(AdminService adminService, FirebaseStorageService storageService, AuditLogService auditLogService, FirestoreDb db)
     {
         _adminService = adminService;
         _storageService = storageService;
         _auditLogService = auditLogService;
+        _db = db;
     }
 
     [HttpGet]
     public async Task<IActionResult> Dashboard()
     {
-        //Use: Display dashboard with list of users
-        //Users in our case are Employers 
         var users = await _adminService.GetAllUsersAsync();
-        return View(users);  // pass list to the view
+        return View(users);
     }
+
     [HttpGet]
     public IActionResult Register() => View();
-    
-    
+
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
-        // 1️⃣ Validate form
         if (!ModelState.IsValid)
-        {
-            var errors = ModelState
-                .Where(kv => kv.Value.Errors.Count > 0)
-                .SelectMany(kv => kv.Value.Errors.Select(e => $"{kv.Key}: {e.ErrorMessage}"))
-                .ToList();
-
-            foreach (var error in errors)
-                Console.WriteLine(error);
-
             return View(model);
-        }
 
-        // 2️⃣ Upload profile photo
         string? photoUrl = null;
 
         if (model.Photo != null && model.Photo.Length > 0)
@@ -56,7 +46,6 @@ public class UserController : Controller
             photoUrl = await _storageService.UploadFileAsync(model.Photo, photoPath);
         }
 
-        // 3️⃣ Upload documents (if any)
         var documentUrls = new List<string>();
         if (model.Documents != null && model.Documents.Any())
         {
@@ -72,39 +61,17 @@ public class UserController : Controller
             }
         }
 
-        // Store document URLs in model
         model.DocumentUrls = documentUrls;
-
-        // 4️⃣ Save to Firestore
         await _adminService.Register(model, photoUrl);
-        // 5️⃣ If user is Admin → also store in "Admins" collection
-        
-        // create the audit Log after succesful registration
-        await _auditLogService.AddLogAsync(User.Identity.Name ?? "Unknown Admin", "Register", $"Registered new user: {model.Name} {model.Surname}");
 
-        // 6️⃣ Redirect to confirmation page
+        await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Register",
+            $"Registered new user: {model.Name} {model.Surname}");
+
         return RedirectToAction("SuccessfulRegistration");
-        
     }
 
-    
-    public IActionResult Login()
-    {
-        return View();
-    }
-    
-    
-    public IActionResult SuccessfulRegistration()
-    {
-        //testing purpose
-        return View();
-    }
-    
-    public IActionResult UnSuccessfulRegistration()
-    {
-        //testing purpose
-        return View();
-    }
+    public IActionResult SuccessfulRegistration() => View();
+    public IActionResult UnSuccessfulRegistration() => View();
 
     public async Task<IActionResult> EmployeeProfile(string idNumber)
     {
@@ -114,80 +81,117 @@ public class UserController : Controller
         var user = await _adminService.GetProfileAsync(idNumber);
         if (user == null)
             return NotFound();
+
         return View(user);
     }
 
-    // Inside your UserController.cs
     public async Task<IActionResult> ApproveRejectScreen(string idNumber)
     {
         if (string.IsNullOrEmpty(idNumber))
-        {
             return NotFound();
-        }
 
-        // Your logic to find the user by their ID number from the database
-        // For example, using Entity Framework:
-        // var user = await _context.Users.FirstOrDefaultAsync(u => u.IdNumber == idNumber);
         var user = await _adminService.GetProfileAsync(idNumber);
-        
-
         if (user == null)
-        {
             return NotFound();
-        }
 
-        return View(user); // Pass the single user object to the view
-    }
-// Add these two methods to your UserController.cs
-
-[HttpGet]
-public async Task<IActionResult> Edit(string idNumber)
-{
-    if (string.IsNullOrEmpty(idNumber))
-    {
-        return BadRequest("ID Number is required.");
+        return View(user);
     }
 
-    // Fetch the existing user data from your service
-    var user = await _adminService.GetProfileAsync(idNumber);
-    if (user == null)
+    // ✅ GET: Edit
+    [HttpGet]
+    public async Task<IActionResult> Edit(string idNumber)
     {
-        return NotFound();
+        if (string.IsNullOrEmpty(idNumber))
+            return BadRequest("ID Number is required.");
+
+        var user = await _adminService.GetProfileAsync(idNumber);
+        if (user == null)
+            return NotFound();
+
+        var model = new EditUserModel
+        {
+            IdNumber = user.IdNumber,
+            Name = user.Name,
+            Surname = user.Surname,
+            DepartmentId = user.DepartmentId,
+            HireDate = user.HireDate,
+            Phone = user.Phone,
+            Address = user.Address,
+            Role = user.Role,
+            EmergencyName = user.EmergencyName,
+            EmergencyPhone = user.EmergencyPhone,
+            City = user.City,
+            Province = user.Province,
+            PostalCode = user.PostalCode,
+            Country = user.Country,
+            Position = user.Position,
+            Gender = user.Gender,
+            Email = user.Email,
+            PhotoUrl = user.PhotoUrl,
+            DocumentUrls = user.DocumentUrls
+        };
+
+        return View(model);
     }
 
-    // Map the user data to your RegistrationModel to pre-populate the form
-    var model = new RegistrationModel
-    {
-        Name = user.Name,
-        Surname = user.Surname,
-        IdNumber = user.IdNumber,
-        DepartmentId = user.DepartmentId,
-        Phone = user.Phone,
-        Address = user.Address,
-        Role = user.Role,
-        Position = user.Position,
-        Email = user.Email,
-        PhotoUrl = user.PhotoUrl // Pass the existing photo URL to the view
-    };
-
-    return View(model);
-}
-
+    // ✅ POST: Edit
     [HttpPost]
-    public async Task<IActionResult> Edit(RegistrationModel model)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(EditUserModel model)
     {
         if (!ModelState.IsValid)
-        {
-            // If the form data is invalid, return the view with the entered data
             return View(model);
+
+        var userRef = _db.Collection("Users").Document(model.IdNumber);
+        var snapshot = await userRef.GetSnapshotAsync();
+        if (!snapshot.Exists)
+            return NotFound("User not found");
+
+        var user = snapshot.ConvertTo<User>();
+
+        // Upload new profile photo
+        if (model.Photo != null && model.Photo.Length > 0)
+        {
+            var fileName = $"{Guid.NewGuid()}_{model.Photo.FileName}";
+            user.PhotoUrl = await _storageService.UploadFileAsync(model.Photo, fileName);
         }
 
-        // You will need to create an "UpdateUserAsync" method in your AdminService
-        // to handle the logic of saving the updated data to Firebase.
-        // await _adminService.UpdateUserAsync(model);
+        // Upload new documents
+        if (model.Documents != null && model.Documents.Any())
+        {
+            user.DocumentUrls ??= new List<string>();
+            foreach (var doc in model.Documents)
+            {
+                var fileName = $"{Guid.NewGuid()}_{doc.FileName}";
+                var url = await _storageService.UploadFileAsync(doc, fileName);
+                user.DocumentUrls.Add(url);
+            }
+        }
 
-        // After successfully updating, redirect to the dashboard or profile page
+        // Update fields
+        user.Name = model.Name ?? user.Name;
+        user.Surname = model.Surname ?? user.Surname;
+        user.Phone = model.Phone ?? user.Phone;
+        user.Address = model.Address ?? user.Address;
+        user.City = model.City ?? user.City;
+        user.Province = model.Province ?? user.Province;
+        user.PostalCode = model.PostalCode ?? user.PostalCode;
+        user.Country = model.Country ?? user.Country;
+        user.DepartmentId = model.DepartmentId ?? user.DepartmentId;
+        user.Position = model.Position ?? user.Position;
+        user.Role = model.Role ?? user.Role;
+        user.EmergencyName = model.EmergencyName ?? user.EmergencyName;
+        user.EmergencyPhone = model.EmergencyPhone ?? user.EmergencyPhone;
+        user.HireDate = model.HireDate ?? user.HireDate;
+        user.Gender = model.Gender ?? user.Gender;
+        user.Email = model.Email ?? user.Email;
+
+        await userRef.SetAsync(user, SetOptions.Overwrite);
+
+        await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Update Profile",
+            $"Updated profile for: {user.Name} {user.Surname}");
+
+        TempData["SuccessMessage"] = "Profile updated successfully!";
         return RedirectToAction("Dashboard");
     }
-
 }

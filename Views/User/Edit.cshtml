@@ -1,4 +1,4 @@
-@model VeriWork_Admin.Application.Models.RegistrationModel
+@model VeriWork_Admin.Application.Models.EditUserModel
 
 @{
     ViewData["Title"] = "Update Employee Information";
@@ -18,38 +18,46 @@
             </a>
         </header>
 
+        <!-- Hidden fields to preserve existing file URLs -->
+        <input type="hidden" asp-for="PhotoUrl" />
+        @if (Model.DocumentUrls != null && Model.DocumentUrls.Any())
+        {
+            @foreach (var url in Model.DocumentUrls)
+            {
+                <input type="hidden" name="DocumentUrls" value="@url" />
+            }
+        }
+
+        <!-- PROFILE PHOTO -->
         <section class="form-section">
             <h2 class="form-section-title">Profile Photo</h2>
             <div class="photo-upload-container">
                 <div class="avatar-preview">
-                    <img id="avatarPreview" src="@Url.Content(Model.PhotoUrl ?? "~/")" alt="Avatar Preview" style="@(string.IsNullOrEmpty(Model.PhotoUrl) ? "display:none;" : "")" />
-                    <svg id="avatarPlaceholder" class="avatar-placeholder-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16" style="@(!string.IsNullOrEmpty(Model.PhotoUrl) ? "display:none;" : "")">
-                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    </svg>
+                    <img id="avatarPreview" src="@Url.Content(Model.PhotoUrl ?? "~/images/default_avatar.png")" alt="Avatar Preview" />
                 </div>
-                <label for="photoUpload" class="btn-upload">Upload Photo</label>
+                <label for="photoUpload" class="btn-upload">Upload New Photo</label>
                 <input asp-for="Photo" type="file" id="photoUpload" class="visually-hidden" accept="image/png, image/jpeg, image/gif" />
             </div>
         </section>
 
+        <!-- PERSONAL INFORMATION -->
         <section class="form-section">
             <h2 class="form-section-title">Personal Information</h2>
             <div class="form-grid">
                 <div class="form-group">
                     <label asp-for="Name">First Name</label>
-                    <input asp-for="Name" />
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Surname">Last Name</label>
-                    <input asp-for="Surname" />
-                </div>
-                <div class="form-group">
-                    <label>Date of Birth</label>
-                    <input type="date" class="form-control" value="2001-01-01" />
+                    <input asp-for="Surname" class="form-control" />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label>Gender</label>
-                    <select class="form-control">
+                    <select asp-for="Gender" class="form-control">
+                        <option value="">Select gender</option>
                         <option>Female</option>
                         <option>Male</option>
                         <option>Prefer not to say</option>
@@ -57,161 +65,150 @@
                 </div>
             </div>
         </section>
-        
+
         <input type="hidden" asp-for="IdNumber" />
 
+        <!-- EMPLOYMENT DETAILS -->
         <section class="form-section">
             <h2 class="form-section-title">Employment Details</h2>
             <div class="form-grid">
                 <div class="form-group">
                     <label asp-for="IdNumber">Employee ID</label>
-                    <input asp-for="IdNumber" readonly />
+                    <input asp-for="IdNumber" readonly class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label asp-for="Position">Role / Department</label>
-                    <input asp-for="Position" />
+                    <label asp-for="Position">Position</label>
+                    <input asp-for="Position" class="form-control" />
                 </div>
-                 <div class="form-group">
-                    <label>Start Date</label>
-                    <input type="date" class="form-control" value="2025-01-01" />
+                <div class="form-group">
+                    <label asp-for="DepartmentId">Department ID</label>
+                    <input asp-for="DepartmentId" class="form-control" />
                 </div>
-                 <div class="form-group">
-                    <label>Manager</label>
-                    <select class="form-control">
-                        <option>Dr Mabanzi</option>
-                        <option>Jane Smith</option>
+                <div class="form-group">
+                    <label asp-for="Role">Role</label>
+                    <select asp-for="Role" class="form-control">
+                        <option value="">Select Role</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Employee">Employee</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="HireDate">Hire Date</label>
+                    <input asp-for="HireDate" type="date" class="form-control" />
                 </div>
             </div>
         </section>
 
+        <!-- CONTACT INFORMATION -->
         <section class="form-section">
             <h2 class="form-section-title">Contact Information</h2>
             <div class="form-grid">
                 <div class="form-group">
-                    <label asp-for="Email">Employee Email</label>
-                    <input asp-for="Email" />
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Phone">Phone Number</label>
-                    <input asp-for="Phone" />
+                    <label asp-for="Phone">Phone</label>
+                    <input asp-for="Phone" class="form-control" />
                 </div>
-                 <div class="form-group">
-                    <label>Emergency Contact Name</label>
-                    <input class="form-control" value="Jane Doe" />
+                <div class="form-group">
+                    <label asp-for="EmergencyName">Emergency Contact Name</label>
+                    <input asp-for="EmergencyName" class="form-control" />
                 </div>
-                 <div class="form-group">
-                    <label>Emergency Contact Phone</label>
-                    <input class="form-control" value="+27 (051) 987-6543" />
+                <div class="form-group">
+                    <label asp-for="EmergencyPhone">Emergency Contact Phone</label>
+                    <input asp-for="EmergencyPhone" class="form-control" />
                 </div>
             </div>
         </section>
-        
+
+        <!-- ADDRESS DETAILS -->
         <section class="form-section">
             <h2 class="form-section-title">Address Details</h2>
             <div class="form-grid" style="grid-template-columns: 2fr 1fr;">
-                 <div class="form-group">
+                <div class="form-group">
                     <label asp-for="Address">Street Address</label>
-                    <input asp-for="Address" />
-                </div>
-                 <div class="form-group">
-                    <label>City</label>
-                    <input class="form-control" value="Anytown" />
-                </div>
-            </div>
-             <div class="form-grid">
-                 <div class="form-group">
-                    <label>Province</label>
-                    <select class="form-control">
-                        <option>Free State</option>
-                        <option>Gauteng</option>
-                    </select>
-                </div>
-                 <div class="form-group">
-                    <label>Postal Code</label>
-                    <input class="form-control" value="90210" />
+                    <input asp-for="Address" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label>Country</label>
-                    <select class="form-control">
-                        <option>South Africa</option>
-                        <option>United States</option>
-                    </select>
+                    <label asp-for="City">City</label>
+                    <input asp-for="City" class="form-control" />
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label asp-for="Province">Province</label>
+                    <input asp-for="Province" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="PostalCode">Postal Code</label>
+                    <input asp-for="PostalCode" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Country">Country</label>
+                    <input asp-for="Country" class="form-control" />
                 </div>
             </div>
         </section>
 
+        <!-- DOCUMENT UPLOAD -->
         <section class="form-section">
             <h2 class="form-section-title">Documents</h2>
-            <div class="document-upload-container">
-                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
-                </svg>
-                <p>Drag & Drop files here or click to upload</p>
-                <div class="upload-info">Supported file types: PDF, DOCX, JPG, PNG. Max size: 5MB.</div>
-                <button type="button" class="btn-upload mt-3">Upload Documents</button>
+
+            <!-- Show existing uploaded docs -->
+            @if (Model.DocumentUrls != null && Model.DocumentUrls.Any())
+            {
+                <ul class="uploaded-docs-list">
+                    @foreach (var docUrl in Model.DocumentUrls)
+                    {
+                        <li>
+                            <a href="@docUrl" target="_blank">
+                                📄 @System.IO.Path.GetFileName(docUrl)
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+
+            <div class="document-upload-container mt-2">
+                <p>Upload new files (optional)</p>
+                <input asp-for="Documents" type="file" multiple class="form-control" accept=".pdf,.docx,.jpg,.png" />
+                <span asp-validation-for="Documents" class="text-danger"></span>
             </div>
         </section>
 
+        <!-- ACTION BUTTONS -->
         <div class="form-actions">
             <a asp-action="Dashboard" class="btn-form btn-cancel">Cancel</a>
             <button type="submit" class="btn-form btn-submit">Update Information</button>
         </div>
-
     </form>
-</div>
 
-<div class="popup-overlay" id="popupOverlay">
-    <div class="popup-box">
-        <div class="popup-icon">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-               <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-             </svg>
-        </div>
-        <h2 class="popup-title">Information Update Successful!</h2>
-        <p class="popup-text">The employee's profile information has been updated successfully.</p>
-        <a asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-popup-action">View Employee Profile</a>
-    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const photoUpload = document.getElementById('photoUpload');
             const avatarPreview = document.getElementById('avatarPreview');
-            const avatarPlaceholder = document.getElementById('avatarPlaceholder');
-
-            photoUpload.addEventListener('change', function (event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        avatarPreview.src = e.target.result;
-                        avatarPreview.style.display = 'block';
-                        avatarPlaceholder.style.display = 'none';
+            if (photoUpload) {
+                photoUpload.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            avatarPreview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
                     }
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            // --- NEW SCRIPT FOR POP-UP ---
-            const editForm = document.getElementById('editForm');
-            const overlay = document.getElementById('popupOverlay');
-            const mainContent = document.getElementById('mainContent');
-
-            editForm.addEventListener('submit', function (event) {
-                // Check if the form is valid before showing the pop-up
-                if (editForm.checkValidity()) {
-                    event.preventDefault(); // Prevent the default form submission
-
-                    // Show the pop-up and apply blur
-                    overlay.style.display = 'flex';
-                    mainContent.classList.add('blurred');
-
-                    // NOTE: In a real app, this is where you would submit the form data via AJAX.
-                }
-            });
+                });
+            }
         });
     </script>
 }

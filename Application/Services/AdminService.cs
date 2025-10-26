@@ -11,11 +11,13 @@ namespace VeriWork_Admin.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly FirestoreDb _db;
+        private readonly AuditLogService _auditLogService;
 
-        public AdminService(IUserRepository userRepository, FirestoreDb db)
+        public AdminService(IUserRepository userRepository, FirestoreDb db,  AuditLogService auditLogService)
         {
             _userRepository = userRepository;
             _db = db;
+            _auditLogService = auditLogService;
         }
 
         /// <summary>
@@ -122,5 +124,51 @@ namespace VeriWork_Admin.Application.Services
         {
             return await _userRepository.GetAllUsersAsync();
         }
+
+        public async Task UpdateUserAsync(EditUserModel model)
+        {
+            if (string.IsNullOrEmpty(model.IdNumber))
+                throw new ArgumentException("User ID is required for updating.");
+
+            // ✅ Build the updated user object
+            var updatedUser = new User
+            {
+                IdNumber = model.IdNumber,
+                Name = model.Name,
+                Surname = model.Surname,
+                Phone = model.Phone,
+                Address = model.Address,
+                City = model.City,
+                Province = model.Province,
+                PostalCode = model.PostalCode,
+                Country = model.Country,
+                DepartmentId = model.DepartmentId,
+                Gender = model.Gender,
+                Role = model.Role,
+                Email = model.Email,
+                EmergencyName = model.EmergencyName,
+                EmergencyPhone = model.EmergencyPhone,
+                Position = model.Position,
+                HireDate = model.HireDate,
+                PhotoUrl = model.PhotoUrl,
+                DocumentUrls = model.DocumentUrls ?? new List<string>()
+            };
+
+            // ✅ Update in Firestore
+            await _userRepository.UpdateUserAsync(updatedUser);
+
+            // ✅ If Admin, also sync to Admins collection
+            if (string.Equals(model.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                var adminDoc = _db.Collection("Admins").Document(model.IdNumber);
+                await adminDoc.SetAsync(updatedUser, SetOptions.Overwrite);
+            }
+            await _auditLogService.AddLogAsync(
+                "Admin",
+                "Update",
+                $"Updated user profile: {model.Name} {model.Surname}"
+            );
+        }
+
     }
 }
