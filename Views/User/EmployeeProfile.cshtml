@@ -6,25 +6,27 @@
 }
 
 <div class="profile-page-container" id="mainContent">
-    <a asp-action="Dashboard" asp-controller="User" class="btn btn-outline-secondary mb-4">
-        &leftarrow; Back to Directory
-    </a>
 
-    <header class="profile-header">
-        <div class="avatar-container">
-            <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Profile Photo" class="avatar" />
-            <div class="status-badge"></div>
+    <header class="page-header">
+        <div class="container d-flex align-items-center gap-3">
+            <div class="avatar-container">
+                <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Profile Photo" class="avatar" />
+                <div class="status-badge"></div>
+            </div>
+            <div class="employee-details">
+                <h1>@Model.Name @Model.Surname</h1>
+                <div class="role">@Model.Position, Engineering</div>
+                <div class="employee-id">Employee ID: @Model.IdNumber</div>
+            </div>
         </div>
-        <div class="employee-details">
-            <h1>@Model.Name @Model.Surname</h1>
-            <div class="role">@Model.Position, Engineering</div>
-            <div class="employee-id">Employee ID: @Model.IdNumber</div>
-        </div>
+    <a asp-action="Dashboard" asp-controller="User" class="btn-register-employee" >
+        &leftarrow; Back to Dashboard
+    </a>
     </header>
 
     <div class="action-buttons">
-        <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" class="btn-profile-action">Update/Edit Info</a>
-        <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.IdNumber" class="btn-profile-action">Verify Status</a>
+        <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">Update/Edit Info</a>
+        <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">Verify Status</a>
     </div>
 
     <div class="info-cards-grid">

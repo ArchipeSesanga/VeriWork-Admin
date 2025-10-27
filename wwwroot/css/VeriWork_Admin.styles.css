@@ -1093,7 +1093,7 @@ body.login-page-body {
     margin: 0;
 }
 .btn-download {
-    height: 36px;
+    height: 40px;
     padding: 0 16px;
     background: #FFFFFF;
     color: #0F74C7;
@@ -1105,6 +1105,7 @@ body.login-page-body {
     display: flex;
     align-items: center;
     gap: 8px;
+    text-decoration: none;
 }
 .btn-download:hover {
     background: #F9FAFB;
