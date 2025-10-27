@@ -91,6 +91,9 @@ public class User
     public String HireDate { get; set; }
     [FirestoreProperty]
     public List<string>? DocumentUrls { get; set; } = new List<string>();
+    
+    [FirestoreProperty]
+    public string Uid { get; set; } // For firebase Authentication
 
     
     

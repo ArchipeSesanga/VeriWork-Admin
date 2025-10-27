@@ -169,6 +169,30 @@ namespace VeriWork_Admin.Application.Services
                 $"Updated user profile: {model.Name} {model.Surname}"
             );
         }
+        
+        public async Task DeleteUserAsync(string idNumber)
+        {
+            var userRef = _db.Collection("Users").Document(idNumber);
+            var snapshot = await userRef.GetSnapshotAsync();
+
+            if (!snapshot.Exists)
+                throw new Exception("User not found");
+
+            var user = snapshot.ConvertTo<User>();
+
+            // 1️⃣ Delete from Firestore
+            await userRef.DeleteAsync();
+
+            // 2️⃣ Delete from Firebase Authentication
+            if (!string.IsNullOrEmpty(user.Uid))
+            {
+                await FirebaseAuth.DefaultInstance.DeleteUserAsync(user.Uid);
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ No UID found for user {user.IdNumber}");
+            }
+        }
 
     }
 }
