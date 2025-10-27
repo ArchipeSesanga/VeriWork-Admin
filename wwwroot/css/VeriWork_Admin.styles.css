@@ -832,18 +832,20 @@ body.login-page-body {
 }
 
 .btn-back-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
     height: 40px;
-    padding: 0 16px;
-    background: rgba(16, 67, 135, 0.7);
+    background: #104387;
     color: #FFFFFF;
     font-family: 'Unbounded', sans-serif;
     font-size: 14px;
     font-weight: 500;
     border-radius: 6px;
+    border: none;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    white-space: nowrap;
 }
 
 .form-group input[readonly] {
