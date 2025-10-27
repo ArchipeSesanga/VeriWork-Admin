@@ -13,7 +13,7 @@
                 <h1>Update Information</h1>
                 <p>Edit the form below to update your employee information.</p>
             </div>
-            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-back-profile">
+            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">
                 &leftarrow; Back to Profile
             </a>
         </header>
@@ -180,8 +180,8 @@
 
         <!-- ACTION BUTTONS -->
         <div class="form-actions">
-            <a asp-action="Dashboard" class="btn-form btn-cancel">Cancel</a>
-            <button type="submit" class="btn-form btn-submit">Update Information</button>
+            <a asp-action="Dashboard" class="btn-download">Cancel</a>
+            <button type="submit" class="btn-register-employee">Update Information</button>
         </div>
     </form>
 
