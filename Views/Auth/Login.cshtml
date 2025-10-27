@@ -25,6 +25,13 @@
             <img src="~/images/white_logo.png" alt="VeriWork Logo" class="login-header-logo" />
         </header>
 
+        @if (TempData["LogoutMessage"] != null)
+        {
+            <div class="alert alert-success text-center" role="alert">
+                @TempData["LogoutMessage"]
+            </div>
+        }
+
         <div class="login-container">
             <form class="login-form" asp-controller="Auth" asp-action="Login" method="post">
                 <img src="~/images/black_logo.png" class="login-form-logo" alt="Logo">

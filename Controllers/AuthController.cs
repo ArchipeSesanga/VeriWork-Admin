@@ -94,6 +94,8 @@ namespace VeriWork_Admin.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
+            
+            TempData["LogoutMessage"] = "You have successfully logged out.";
 
             return RedirectToAction("Login", "Auth");
         }
