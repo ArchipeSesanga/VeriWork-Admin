@@ -151,7 +151,8 @@ namespace VeriWork_Admin.Application.Services
                 Position = model.Position,
                 HireDate = model.HireDate,
                 PhotoUrl = model.PhotoUrl,
-                DocumentUrls = model.DocumentUrls ?? new List<string>()
+                DocumentUrls = model.DocumentUrls ?? new List<string>(),
+                VerificationStatus = "Pending"
             };
 
             // ✅ Update in Firestore

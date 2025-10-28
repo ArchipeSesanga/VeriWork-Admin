@@ -34,8 +34,20 @@ public class UserController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
+        // if (!ModelState.IsValid)
+        //     return View(model);
         if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(kv => kv.Value.Errors.Count > 0)
+                .SelectMany(kv => kv.Value.Errors.Select(e => $"{kv.Key}: {e.ErrorMessage}"))
+                .ToList();
+
+            foreach (var error in errors)
+                Console.WriteLine(error);
+
             return View(model);
+        }
 
         string? photoUrl = null;
 
@@ -97,7 +109,7 @@ public class UserController : Controller
         return View(user);
     }
 
-    // ✅ GET: Edit
+    
     [HttpGet]
     public async Task<IActionResult> Edit(string idNumber)
     {
@@ -134,7 +146,7 @@ public class UserController : Controller
         return View(model);
     }
 
-    // ✅ POST: Edit
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditUserModel model)
@@ -213,5 +225,38 @@ public class UserController : Controller
         }
 
         return RedirectToAction("Dashboard");
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ApproveVerification(string idNumber)
+    {
+        var user = await _adminService.GetProfileAsync(idNumber);
+        if (user == null) return NotFound();
+
+        user.VerificationStatus = "Approved";
+        await _adminService.UpdateProfileAsync(user);
+
+        await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Verification", $"Approved user: {user.Name} {user.Surname}");
+
+        TempData["SuccessMessage"] = $"✅ {user.Name}'s verification has been approved.";
+        return RedirectToAction("EmployeeProfile", new { idNumber });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RejectVerification(string idNumber, string reason)
+    {
+        var user = await _adminService.GetProfileAsync(idNumber);
+        if (user == null) return NotFound();
+
+        user.VerificationStatus = "Rejected";
+        user.VerificationNotes = reason;
+        await _adminService.UpdateProfileAsync(user);
+
+        await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Verification", $"Rejected user: {user.Name} {user.Surname} — Reason: {reason}");
+
+        TempData["ErrorMessage"] = $"❌ {user.Name}'s verification has been rejected.";
+        return RedirectToAction("EmployeeProfile", new { idNumber });
     }
 }

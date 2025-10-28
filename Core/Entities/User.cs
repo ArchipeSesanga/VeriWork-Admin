@@ -93,7 +93,14 @@ public class User
     public List<string>? DocumentUrls { get; set; } = new List<string>();
     
     [FirestoreProperty]
-    public string Uid { get; set; } // For firebase Authentication
+    public string? Uid { get; set; } // For firebase Authentication
+    
+    [FirestoreProperty]
+    public string VerificationStatus { get; set; } = "Pending";
+    
+    [FirestoreProperty]
+    public string? VerificationNotes { get; set; } 
+
 
     
     
