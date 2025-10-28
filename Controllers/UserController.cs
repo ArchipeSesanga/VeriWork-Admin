@@ -194,4 +194,24 @@ public class UserController : Controller
         TempData["SuccessMessage"] = "Profile updated successfully!";
         return RedirectToAction("Dashboard");
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteUser(string idNumber)
+    {
+        if (string.IsNullOrEmpty(idNumber))
+            return BadRequest("Invalid ID number.");
+
+        try
+        {
+            await _adminService.DeleteUserAsync(idNumber);
+            TempData["SuccessMessage"] = "Employee deleted successfully.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Error deleting employee: {ex.Message}";
+        }
+
+        return RedirectToAction("Dashboard");
+    }
 }

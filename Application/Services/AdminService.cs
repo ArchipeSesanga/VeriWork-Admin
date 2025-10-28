@@ -172,26 +172,49 @@ namespace VeriWork_Admin.Application.Services
         
         public async Task DeleteUserAsync(string idNumber)
         {
+            if (string.IsNullOrEmpty(idNumber))
+                throw new ArgumentException("User ID number cannot be null or empty.");
+
             var userRef = _db.Collection("Users").Document(idNumber);
             var snapshot = await userRef.GetSnapshotAsync();
 
             if (!snapshot.Exists)
-                throw new Exception("User not found");
+                throw new Exception($"User with ID {idNumber} not found in Firestore.");
 
             var user = snapshot.ConvertTo<User>();
 
-            // 1️⃣ Delete from Firestore
+            // 1️⃣ Delete from Firestore main collection
             await userRef.DeleteAsync();
 
-            // 2️⃣ Delete from Firebase Authentication
-            if (!string.IsNullOrEmpty(user.Uid))
+            // 2️⃣ Delete from Admins collection if exists
+            var adminRef = _db.Collection("Admins").Document(idNumber);
+            var adminSnapshot = await adminRef.GetSnapshotAsync();
+            if (adminSnapshot.Exists)
+                await adminRef.DeleteAsync();
+
+            // 3️⃣ Delete from Firebase Authentication (if UID stored)
+            try
             {
-                await FirebaseAuth.DefaultInstance.DeleteUserAsync(user.Uid);
+                if (!string.IsNullOrEmpty(user.Uid))
+                {
+                    await FirebaseAuth.DefaultInstance.DeleteUserAsync(user.Uid);
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ No UID found for user {user.Email} ({user.IdNumber}). Skipping Firebase Auth delete.");
+                }
             }
-            else
+            catch (FirebaseAuthException ex)
             {
-                Console.WriteLine($"⚠️ No UID found for user {user.IdNumber}");
+                Console.WriteLine($"⚠️ Firebase Auth delete failed: {ex.Message}");
             }
+
+            // 4️⃣ Log the deletion in audit logs
+            await _auditLogService.AddLogAsync(
+                "Admin",
+                "Delete",
+                $"Deleted user: {user.Name} {user.Surname} ({user.Email})"
+            );
         }
 
     }

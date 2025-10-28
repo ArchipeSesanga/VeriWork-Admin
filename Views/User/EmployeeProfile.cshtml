@@ -69,25 +69,30 @@
     </div>
     
     <div class="delete-section">
-        <button class="btn-delete" id="deleteButton">Delete Employee</button>
+        <button  asp-action="DeleteUser" asp-controller="User" class="btn-delete" id="deleteButton">Delete Employee</button>
     </div>
 </div>
 
 <div class="popup-overlay" id="popupOverlay">
     
+    <!-- Confirmation Popup -->
     <div class="popup-box" id="confirmDeletePopup">
         <div class="popup-icon">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-               <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-             </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+            </svg>
         </div>
         <h2 class="popup-title">Are you sure?</h2>
         <p class="popup-text">The employee's profile information will be deleted from the database.</p>
         <div class="popup-actions">
-            <button class="btn-popup btn-popup-confirm" id="confirmDeleteButton">Delete Employee Profile</button>
+            <form asp-action="DeleteUser" asp-controller="User" method="post">
+                <input type="hidden" name="idNumber" value="@Model.IdNumber" />
+                <button type="submit" class="btn-popup btn-popup-confirm">Delete Employee Profile</button>
+            </form>
             <button class="btn-popup btn-popup-cancel" id="cancelDeleteButton">Cancel</button>
         </div>
     </div>
+
 
     <div class="popup-box" id="deleteSuccessPopup">
         <div class="popup-icon">
@@ -109,39 +114,18 @@
             const overlay = document.getElementById('popupOverlay');
             const mainContent = document.getElementById('mainContent');
             const confirmPopup = document.getElementById('confirmDeletePopup');
-            const successPopup = document.getElementById('deleteSuccessPopup');
-            const confirmDeleteBtn = document.getElementById('confirmDeleteButton');
             const cancelDeleteBtn = document.getElementById('cancelDeleteButton');
-
-            function showConfirmationPopup() {
-                overlay.style.display = 'flex';
-                confirmPopup.style.display = 'block';
-                successPopup.style.display = 'none';
-                mainContent.classList.add('blurred');
-            }
-
-            function showSuccessPopup() {
-                confirmPopup.style.display = 'none';
-                successPopup.style.display = 'block';
-            }
-
-            function closePopup() {
-                overlay.style.display = 'none';
-                mainContent.classList.remove('blurred');
-            }
 
             deleteButton.addEventListener('click', function(event) {
                 event.preventDefault();
-                showConfirmationPopup();
+                overlay.style.display = 'flex';
+                confirmPopup.style.display = 'block';
+                mainContent.classList.add('blurred');
             });
 
-            cancelDeleteBtn.addEventListener('click', closePopup);
-            
-            confirmDeleteBtn.addEventListener('click', function(event) {
-                event.preventDefault();
-                // In a real app, you would make an AJAX call to the server here to delete the employee.
-                // For this simulation, we just switch to the success pop-up.
-                showSuccessPopup();
+            cancelDeleteBtn.addEventListener('click', function() {
+                overlay.style.display = 'none';
+                mainContent.classList.remove('blurred');
             });
         });
     </script>
