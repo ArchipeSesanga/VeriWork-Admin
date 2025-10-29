@@ -32,6 +32,7 @@ body.login-page-body {
 
 .login-container {
     margin: auto;
+    margin-top: 5%;
     width: 448px;
     max-width: 95%;
     height: auto;
@@ -142,7 +143,9 @@ body.login-page-body {
 .login-button {
     margin-top: 23px;
     width: 100%;
-    height: 40px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -151,6 +154,8 @@ body.login-page-body {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    white-space: normal;
+    line-height: 1.4;
 }
 
 .login-button:hover {
@@ -218,8 +223,9 @@ body.login-page-body {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 0 20px;
-    height: 40px;
+    padding: 8px 20px;
+    min-height: 40px;
+    height: auto;
     background: #104387;
     color: #FFFFFF;
     font-family: 'Unbounded', sans-serif;
@@ -228,7 +234,8 @@ body.login-page-body {
     border-radius: 6px;
     border: none;
     text-decoration: none;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-register-employee:hover {
     color: #FFFFFF;
@@ -329,8 +336,9 @@ body.login-page-body {
 }
 
 .btn-view-profile {
-    height: 32px;
-    padding: 0 16px;
+    min-height: 32px;
+    height: auto;
+    padding: 4px 16px;
     background: #FFFFFF;
     border: 1px solid #DEE1E6;
     border-radius: 6px;
@@ -340,7 +348,8 @@ body.login-page-body {
     color: #171A1F;
     text-decoration: none;
     display: inline-block;
-    line-height: 30px;
+    line-height: 1.4;
+    white-space: normal;
 }
 .btn-view-profile:hover {
     background-color: #F9FAFB;
@@ -384,8 +393,9 @@ body.login-page-body {
     margin-top: 8px;
 }
 .btn-back {
-    height: 40px;
-    padding: 0 16px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     background: rgba(16, 67, 135, 0.7);
     color: #FFFFFF;
     font-family: 'Unbounded', sans-serif;
@@ -396,6 +406,8 @@ body.login-page-body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    white-space: normal;
+    line-height: 1.4;
 }
 
 .form-section {
@@ -445,6 +457,7 @@ body.login-page-body {
     border-radius: 6px;
     padding: 8px 16px;
     cursor: pointer;
+    white-space: normal;
 }
 .upload-info {
     font-size: 12px;
@@ -519,12 +532,15 @@ body.login-page-body {
     padding-top: 24px;
 }
 .btn-form {
-    height: 40px;
-    padding: 0 24px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 24px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
     border-radius: 6px;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-reset {
     background: #FFFFFF;
@@ -577,7 +593,9 @@ body.login-page-body {
 }
 .btn-popup-action {
     width: 100%;
-    height: 40px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     background: #104387;
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
@@ -589,6 +607,8 @@ body.login-page-body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-popup-action:hover {
     background: #0A2A55;
@@ -660,8 +680,9 @@ body.login-page-body {
 }
 
 .btn-profile-action {
-    height: 40px;
-    padding: 0 24px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 24px;
     font-family: 'Unbounded', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -673,6 +694,8 @@ body.login-page-body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-profile-action:hover {
     background: #134CC9;
@@ -716,7 +739,9 @@ body.login-page-body {
 
 .btn-card-action {
     width: 100%;
-    height: 40px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     margin-top: 12px;
     font-family: 'Unbounded', sans-serif;
     font-size: 14px;
@@ -725,6 +750,8 @@ body.login-page-body {
     background: #FFFFFF;
     border: 1px solid #DEE1E6;
     border-radius: 6px;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-card-action:hover {
     background: #F9FAFB;
@@ -745,7 +772,7 @@ body.login-page-body {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
- .history-item:last-child {
+    .history-item:last-child {
     border-bottom: none;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -756,7 +783,7 @@ body.login-page-body {
     font-weight: 500;
     color: #171A1F;
 }
-  .history-item-details span {
+    .history-item-details span {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     color: #565D6D;
@@ -773,8 +800,9 @@ body.login-page-body {
     text-align: right;
 }
 .btn-delete {
-    height: 40px;
-    padding: 0 24px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 24px;
     font-family: 'Unbounded', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -782,8 +810,10 @@ body.login-page-body {
     background: #FFFFFF;
     border: 1px solid #DC2626;
     border-radius: 6px;
+    white-space: normal;
+    line-height: 1.4;
 }
- .btn-delete:hover {
+    .btn-delete:hover {
     background: #FEF2F2;
     color: #B91C1C;
 }
@@ -798,7 +828,9 @@ body.login-page-body {
 }
 .btn-popup {
     width: 100%;
-    height: 40px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -809,6 +841,8 @@ body.login-page-body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-popup-confirm {
     background: #104387;
@@ -835,8 +869,9 @@ body.login-page-body {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 0 20px;
-    height: 40px;
+    padding: 8px 20px;
+    min-height: 40px;
+    height: auto;
     background: #104387;
     color: #FFFFFF;
     font-family: 'Unbounded', sans-serif;
@@ -845,7 +880,8 @@ body.login-page-body {
     border-radius: 6px;
     border: none;
     text-decoration: none;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.4;
 }
 
 .form-group input[readonly] {
@@ -1003,13 +1039,17 @@ body.login-page-body {
     gap: 16px;
 }
 .btn-decision {
-    height: 40px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 700;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-approve {
     color: #65A30D;
@@ -1022,7 +1062,7 @@ body.login-page-body {
     color: #FFFFFF;
     background-color: #DC2626;
 }
- .btn-reject:hover {
+    .btn-reject:hover {
     background-color: #B91C1C;
 }
 
@@ -1059,14 +1099,17 @@ body.login-page-body {
     font-size: 14px;
 }
 .btn-apply-filters {
-    height: 40px;
-    padding: 0 24px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 24px;
     background: #0F74C7;
     color: #FFFFFF;
     border: none;
     border-radius: 6px;
     font-weight: 500;
     font-size: 14px;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-apply-filters:hover {
     background: #0A4D84;
@@ -1093,8 +1136,9 @@ body.login-page-body {
     margin: 0;
 }
 .btn-download {
-    height: 40px;
-    padding: 0 16px;
+    min-height: 40px;
+    height: auto;
+    padding: 8px 16px;
     background: #FFFFFF;
     color: #0F74C7;
     border: 1px solid #DEE1E6;
@@ -1106,6 +1150,8 @@ body.login-page-body {
     align-items: center;
     gap: 8px;
     text-decoration: none;
+    white-space: normal;
+    line-height: 1.4;
 }
 .btn-download:hover {
     background: #F9FAFB;
@@ -1168,11 +1214,11 @@ body.login-page-body {
 /* Layout */
 
 body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; background: #F8F9FA; }
-        .app-header { width: 100%; height: 64px; background: #104387; box-shadow: 0px 0px 1px #171a1f14, 0px 0px 2px #171a1f14; display: flex; align-items: center; justify-content: space-between; padding: 0 27px; box-sizing: border-box; flex-shrink: 0; position: relative; z-index: 1060; }
+        .app-header { width: 100%; height: 64px; background: #104387; box-shadow: 0px 0px 1px #171a1f14, 0px 0px 2px #171a1f14; display: flex; align-items: center; justify-content: space-between; padding: 0 27px; box-sizing: border-box; flex-shrink: 0; position: sticky; top: 0; z-index: 1060; }
         .header-left-section { display: flex; align-items: center; gap: 20px; }
         .dashboard-header-logo { width: 61px; height: 38px; object-fit: contain; }
         .header-brand-name { font-family: 'Unbounded', sans-serif; font-size: 24px; line-height: 36px; font-weight: 600; color: #FFFFFFFF; }
-        .btn-sign-out { height: 40px; padding: 0 12px; display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 500; color: #FFFFFF; background: #B0251A; border: none; border-radius: 6px; gap: 8px; text-decoration: none; cursor: pointer; }
+        .btn-sign-out { min-height: 40px; height: auto; padding: 8px 12px; display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 500; color: #FFFFFF; background: #B0251A; border: none; border-radius: 6px; gap: 8px; text-decoration: none; cursor: pointer; white-space: normal; line-height: 1.4; }
         .btn-sign-out:hover { background: #8e1f16; color: #FFFFFF; }
         .btn-sign-out .icon { width: 16px; height: 16px; fill: #FFFFFF; }
         .app-layout { display: flex; flex: 1; transition: filter 0.3s ease-in-out; }
@@ -1201,8 +1247,204 @@ body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; back
         .popup-title { font-family: 'Inter', sans-serif; font-size: 30px; font-weight: 700; color: #171A1F; margin: 0 0 8px 0; }
         .popup-text { font-family: 'Inter', sans-serif; font-size: 16px; color: #565D6D; margin-bottom: 3rem; }
         .popup-actions { display: flex; gap: 16px; }
-        .btn-popup { width: 100%; height: 40px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-popup { width: 100%; min-height: 40px; height: auto; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; white-space: normal; line-height: 1.4; }
         .btn-popup-confirm { background: #B0251A; color: #FFFFFF; }
         .btn-popup-confirm:hover { background: #7B1912; color: #FFFFFF; }
         .btn-popup-cancel { background: #104387; color: #FFFFFF; }
         .btn-popup-cancel:hover { background: #0A2A55; }
+
+/*
+ * ===================================================================
+ * * RESPONSIVE STYLES (Mobile & Tablet)
+ * * ===================================================================
+ */
+
+@media (max-width: 768px) {
+
+    /* == General Layout == */
+    .app-layout {
+        flex-direction: column; /* Stack side panel and main content */
+    }
+
+    .left-panel {
+        width: 100%; /* Make nav full-width */
+        min-height: auto; /* Allow height to be auto */
+        padding: 16px;
+    }
+
+    .main-content {
+        padding: 20px 15px; /* Reduce padding for smaller screens */
+    }
+
+    .app-header {
+        padding: 0 15px;
+    }
+
+    .header-brand-name {
+        display: none; /* Hide brand name to save space */
+    }
+
+    .app-footer {
+        flex-direction: column; /* Stack footer items */
+        gap: 15px;
+        padding: 20px 15px;
+        height: auto; /* Let height be dynamic */
+    }
+
+    .footer-social-icons {
+        justify-content: center; /* Center icons when stacked */
+    }
+
+
+    /* == Login Screen == */
+    .login-form {
+        padding: 0 15px 40px; /* Reduce side padding */
+    }
+
+    .login-header-logo {
+        left: 15px;
+    }
+
+
+    /* == Dashboard Screen == */
+    .dashboard-card {
+        padding: 1.5rem; /* Reduce card padding */
+    }
+
+    .actions-container {
+        flex-direction: column; /* Stack button and search */
+        align-items: stretch; /* Make items full-width */
+    }
+
+    .search-box {
+        width: 100%; /* Make search full-width */
+    }
+
+    /* Make tables horizontally scrollable */
+    .employee-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto; /* Add horizontal scroll */
+    }
+    
+    .employee-table thead th,
+    .employee-table tbody td {
+        white-space: nowrap; /* Prevent cell content from wrapping */
+    }
+    
+    /* Allow button text to wrap, overriding the cell's nowrap */
+    .btn-view-profile {
+        white-space: normal; 
+    }
+
+
+    /* == Registration & Edit Screens == */
+    .register-page-container,
+    .edit-page-container {
+        padding: 24px; /* Reduce padding */
+        margin: 1rem 0;
+    }
+
+    .page-header {
+        flex-direction: column; /* Stack header title and button */
+        align-items: flex-start; /* Align to the left */
+        gap: 16px;
+    }
+
+    .form-actions {
+        flex-direction: column; /* Stack form buttons */
+        gap: 12px;
+    }
+
+    .btn-form {
+        width: 100%; /* Make buttons full-width */
+    }
+
+
+    /* == Profile Screen == */
+    .profile-header {
+        flex-direction: column; /* Stack avatar and details */
+        align-items: flex-start;
+    }
+
+    .action-buttons {
+        flex-wrap: wrap; /* Allow buttons to wrap to the next line */
+    }
+
+    .info-cards-grid {
+        grid-template-columns: 1fr; /* Stack info cards */
+    }
+
+    .history-item {
+        flex-direction: column; /* Stack history item content */
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .delete-section {
+        text-align: center;
+    }
+
+    .btn-delete {
+        width: 100%; /* Make delete button full-width */
+    }
+
+
+    /* == Approve/Reject Screen == */
+    .verification-page-container {
+        grid-template-columns: 1fr; /* Stack all 3 columns */
+        padding: 1rem 0;
+    }
+
+    .decision-buttons {
+        grid-template-columns: 1fr; /* Stack approve/reject buttons */
+    }
+
+
+    /* == Audit Logs Screen == */
+    .audit-log-page .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-bar {
+        flex-direction: column; /* Stack filter input and button */
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .filter-input {
+        width: 100%; /* Make filter input full-width */
+    }
+
+    .log-section-header {
+        flex-direction: column; /* Stack header and download button */
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    /* Make audit table horizontally scrollable */
+    .audit-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .audit-table th, .audit-table td {
+        white-space: nowrap; /* Prevent content from wrapping */
+    }
+
+
+    /* == Popups (General) == */
+    .popup-box {
+        width: 90%; /* Use percentage width */
+        max-width: 448px;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .popup-actions {
+        flex-direction: column; /* Stack popup buttons */
+        gap: 12px;
+    }
+}

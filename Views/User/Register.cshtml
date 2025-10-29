@@ -190,14 +190,12 @@
         <section class="form-section">
             <h2 class="form-section-title">Account Security</h2>
             <div class="form-grid">
-                <!-- Password -->
                 <div class="form-group">
                     <label asp-for="Password">Password</label>
                     <input asp-for="Password" type="password" placeholder="Enter password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
-                <!-- Confirm Password -->
                 <div class="form-group">
                     <label asp-for="ConfirmPassword">Confirm Password</label>
                     <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password" class="form-control" />
@@ -205,7 +203,7 @@
                 </div>
             </div>
         </section>
-       
+        
 
 
         <div class="form-actions">
@@ -213,6 +211,19 @@
             <button type="submit" class="btn-register-employee">Submit Registration</button>
         </div>
     </form>
+</div>
+
+<div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box" id="successPopup" style="display:none;">        
+        <svg class="popup-icon popup-icon-approve" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 0 0 1.06 0l5-5a.75.75 0 0 0 .022-1.08z"/>
+        </svg>
+
+        <h3 class="popup-title">Employee Registration Successful!</h3>
+        <p class="popup-text">The new employee's profile has been created successfully.</p>
+        
+        <a id="viewProfileButton" href="#" class="btn-popup-action">View Employee Profile</a>
+    </div>
 </div>
 
 
@@ -226,49 +237,70 @@
             const documentInput = document.getElementById('documentInput');
             const container = document.getElementById('documentUploadContainer');
 
-            uploadBtn.addEventListener('click', () => documentInput.click());
-            container.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                container.style.borderColor = '#104387';
-            });
-            container.addEventListener('dragleave', () => {
-                container.style.borderColor = '#DEE1E6';
-            });
-            container.addEventListener('drop', (e) => {
-                e.preventDefault();
-                documentInput.files = e.dataTransfer.files;
-                container.style.borderColor = '#DEE1E6';
-            });
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', () => documentInput.click());
+            }
+            if (container) {
+                container.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    container.style.borderColor = '#104387';
+                });
+                container.addEventListener('dragleave', () => {
+                    container.style.borderColor = '#DEE1E6';
+                });
+                container.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    documentInput.files = e.dataTransfer.files;
+                    container.style.borderColor = '#DEE1E6';
+                });
+            }
 
             // ----- Profile photo preview -----
             const photoUpload = document.getElementById('photoUpload');
             const avatarPreview = document.getElementById('avatarPreview');
             const avatarPlaceholder = document.getElementById('avatarPlaceholder');
 
-            photoUpload.addEventListener('change', function (event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        avatarPreview.src = e.target.result;
-                        avatarPreview.style.display = 'block';
-                        avatarPlaceholder.style.display = 'none';
+            if (photoUpload) {
+                photoUpload.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            avatarPreview.src = e.target.result;
+                            avatarPreview.style.display = 'block';
+                            if(avatarPlaceholder) {
+                                avatarPlaceholder.style.display = 'none';
+                            }
+                        }
+                        reader.readAsDataURL(file);
                     }
-                    reader.readAsDataURL(file);
-                }
-            });
+                });
+            }
 
-            // ----- Optional overlay logic -----
+            // ----- Form submission overlay logic -----
             const registerForm = document.getElementById('registerForm');
             const overlay = document.getElementById('popupOverlay');
             const mainContent = document.getElementById('mainContent');
 
-            registerForm.addEventListener('submit', function (event) {
-                // ✅ Remove preventDefault if backend handles redirect
-                if (registerForm.checkValidity()) {
-                    
-                }
-            });
+            if (registerForm) {
+                registerForm.addEventListener('submit', function (event) {
+                    // Check if the form is valid
+                    if (registerForm.checkValidity()) {
+                        
+                        // ***THIS IS THE FIX***
+                        // Show overlay and blur background as feedback
+                        // We do NOT preventDefault, so the form submits
+                        if(overlay) {
+                            overlay.style.display = 'flex';
+                        }
+                        if(mainContent) {
+                            mainContent.classList.add('blurred');
+                        }
+                    }
+                    // If not valid, browser's HTML5 validation will
+                    // automatically stop the submission.
+                });
+            }
         });
     </script>
 }
