@@ -39,17 +39,32 @@
 
     <div class="verification-card decision-card">
         <h3>Final Decision</h3>
-        <form>
+
+        <!-- APPROVE FORM -->
+        <form asp-action="ApproveVerification" asp-controller="User" method="post">
+            <input type="hidden" name="idNumber" value="@Model.IdNumber" />
             <div class="mb-3">
                 <label for="adminNotes" class="form-label">Administrator Notes</label>
-                <textarea class="form-control" id="adminNotes" rows="5" placeholder="Add any relevant notes here..."></textarea>
+                <textarea class="form-control" name="reason" id="adminNotes" rows="5" placeholder="Add any relevant notes here..."></textarea>
             </div>
             <div class="decision-buttons">
-                 <button type="submit" class="btn-decision btn-approve" id="approveButton">Approve Employee</button>
-                 <button type="submit" class="btn-decision btn-reject" id="rejectButton">Reject Employee</button>
+                <button type="submit" class="btn-decision btn-approve">Approve Employee</button>
+            </div>
+        </form>
+
+        <!-- REJECT FORM -->
+        <form asp-action="RejectVerification" asp-controller="User" method="post" class="mt-2">
+            <input type="hidden" name="idNumber" value="@Model.IdNumber" />
+            <div class="mb-3">
+                <label for="rejectNotes" class="form-label">Rejection Notes</label>
+                <textarea class="form-control" name="reason" id="rejectNotes" rows="5" placeholder="Explain why you are rejecting..."></textarea>
+            </div>
+            <div class="decision-buttons">
+                <button type="submit" class="btn-decision btn-reject">Reject Employee</button>
             </div>
         </form>
     </div>
+
 
 </div>
 

@@ -61,8 +61,28 @@
                             <td><span class="employee-department">@user.DepartmentId</span></td>
                             <td><span class="employee-role">@user.Role</span></td>
                             <td>
-                                <span class="status-tag status-verified">Verified</span>
-                                @* Example of another status: <span class="status-tag status-pending">Pending</span> *@
+                                @{
+                                    var status = user.VerificationStatus?.ToLower() ?? "pending"; // Default to pending if null
+
+                                    if (status == "verified")
+                                    {
+                                        <span class="status-tag status-verified">Verified</span>
+                                    }
+                                    else if (status == "pending")
+                                    {
+                                        <span class="status-tag status-pending">Pending</span>
+                                    }
+                                    else if (status == "rejected")
+                                    {
+                                        <span class="status-tag status-rejected">Rejected</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-tag status-unknown">Unknown</span>
+                                    }
+                                }
+                                
+                                
                             </td>
                             <td>
                                 <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@user.IdNumber" class="btn-view-profile">
