@@ -32,7 +32,30 @@
     <div class="info-cards-grid">
         <div class="info-card">
             <h4>Verification Status</h4>
-            <p><strong>Current Status:</strong> <span class="status-tag-verified">Verified</span></p>
+            
+            @{
+                var status = Model.VerificationStatus?.ToLower() ?? "pending"; // Default to pending if null
+
+                if (status == "verified")
+                {
+                    <p><strong>Current Status:</strong> <span class="status-tag-verified">Verified</span></p>
+                }
+                else if (status == "pending")
+                {
+                    <p><strong>Current Status:</strong> <span class="status-tag status-pending">Pending</span></p>
+                    
+                }
+                else if (status == "rejected")
+                {
+                    <p><strong>Current Status:</strong><span class="status-tag status-unknown">Unknown</span></p>
+                    <span class="status-tag status-rejected">Rejected</span>
+                }
+                else
+                {
+                    <p><strong>Current Status:</strong><span class="status-tag status-unknown">Unknown</span></p>
+                   
+                }
+            }
             <p><strong>Expiry Date:</strong> 2025-12-31</p>
             <button class="btn-card-action">Check Documentation Status</button>
         </div>
