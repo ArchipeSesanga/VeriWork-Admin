@@ -64,7 +64,7 @@
                                 @{
                                     var status = user.VerificationStatus?.ToLower() ?? "pending"; // Default to pending if null
 
-                                    if (status == "approved" || status == "verified")
+                                    if (status == "approved")
                                     {
                                         <span class="status-tag status-verified">Approved</span>
                                     }
@@ -76,17 +76,11 @@
                                     {
                                         <span class="status-tag status-rejected">Rejected</span>
                                     }
-                                    else
-                                    {
-                                        <span class="status-tag status-unknown">Unknown</span>
-                                    }
+                                    @* else *@
+                                    @* { *@
+                                    @*     <span class="status-tag status-unknown">Unknown</span> *@
+                                    @* } *@
                                 }
-                                
-                                @{
-                                    Console.WriteLine($"DEBUG: VerificationStatus = '{user.VerificationStatus}'");
-                                }
-
-                                
                                 
                             </td>
                             <td>

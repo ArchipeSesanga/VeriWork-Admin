@@ -4,6 +4,7 @@ namespace VeriWork_Admin.Application.Models;
 
 public class EditUserModel
 {
+    public string? Uid { get; set; }
     public string IdNumber { get; set; }
     public string Name { get; set; }
     public string Surname { get; set; }

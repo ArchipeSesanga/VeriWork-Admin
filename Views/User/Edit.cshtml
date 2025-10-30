@@ -8,12 +8,15 @@
 <div class="edit-page-container" id="mainContent">
     <form asp-action="Edit" asp-controller="User" method="post" enctype="multipart/form-data" id="editForm">
 
+        <!-- REQUIRED: Hidden UID field -->
+        <input type="hidden" asp-for="Uid" />
+
         <header class="page-header">
             <div>
                 <h1>Update Information</h1>
                 <p>Edit the form below to update your employee information.</p>
             </div>
-            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">
+            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-uid="@Model.Uid" class="btn-register-employee">
                 &leftarrow; Back to Profile
             </a>
         </header>

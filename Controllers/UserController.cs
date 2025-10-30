@@ -100,12 +100,12 @@ public class UserController : Controller
 
 
 
-    public async Task<IActionResult> ApproveRejectScreen(string idNumber)
+    public async Task<IActionResult> ApproveRejectScreen(string uid)
     {
-        if (string.IsNullOrEmpty(idNumber))
+        if (string.IsNullOrEmpty(uid))
             return NotFound();
 
-        var user = await _adminService.GetProfileAsync(idNumber);
+        var user = await _adminService.GetProfileAsync(uid);
         if (user == null)
             return NotFound();
 
@@ -114,17 +114,18 @@ public class UserController : Controller
 
     
     [HttpGet]
-    public async Task<IActionResult> Edit(string idNumber)
+    public async Task<IActionResult> Edit(string uid)
     {
-        if (string.IsNullOrEmpty(idNumber))
-            return BadRequest("ID Number is required.");
+        if (string.IsNullOrEmpty(uid))
+            return BadRequest("UID Number is required.");
 
-        var user = await _adminService.GetProfileAsync(idNumber);
+        var user = await _adminService.GetProfileAsync(uid);
         if (user == null)
             return NotFound();
 
         var model = new EditUserModel
         {
+            Uid = user.Uid,
             IdNumber = user.IdNumber,
             Name = user.Name,
             Surname = user.Surname,
@@ -158,7 +159,7 @@ public class UserController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var userRef = _db.Collection("Users").Document(model.IdNumber);
+        var userRef = _db.Collection("Users").Document(model.Uid);
         var snapshot = await userRef.GetSnapshotAsync();
         if (!snapshot.Exists)
             return NotFound("User not found");
