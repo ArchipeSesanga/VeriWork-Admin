@@ -8,6 +8,8 @@ public class User
 {
     [Key]
     [FirestoreProperty]
+    public string? Uid { get; set; } // For firebase Authentication
+    [FirestoreProperty]
     public string IdNumber { get; set; }  // Unique identifier, e.g. SA ID Number
 
     [FirestoreProperty]
@@ -92,8 +94,7 @@ public class User
     [FirestoreProperty]
     public List<string>? DocumentUrls { get; set; } = new List<string>();
     
-    [FirestoreProperty]
-    public string? Uid { get; set; } // For firebase Authentication
+  
     
     [FirestoreProperty]
     public string VerificationStatus { get; set; } = "Pending";

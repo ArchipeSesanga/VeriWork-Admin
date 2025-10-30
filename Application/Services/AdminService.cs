@@ -24,14 +24,35 @@ namespace VeriWork_Admin.Application.Services
         /// Registers a new user in Firebase Authentication and Firestore.
         /// Admins are also stored in the 'Admins' collection.
         /// </summary>
-       public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
+     public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
 {
-    // Hash password for security
+    // 1️⃣ Hash password for security
     var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-    // Build full user entity
+    // 2️⃣ Create Firebase Authentication user
+    UserRecord userRecord;
+    try
+    {
+        var userRecordArgs = new UserRecordArgs
+        {
+            Email = model.Email,
+            Password = model.Password,
+            DisplayName = $"{model.Name} {model.Surname}",
+            Disabled = false
+        };
+
+        userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userRecordArgs);
+    }
+    catch (FirebaseAuthException ex)
+    {
+        Console.WriteLine($"[Firebase Auth] Error creating user: {ex.Message}");
+        throw new Exception("Failed to create Firebase authentication user.");
+    }
+
+    // 3️⃣ Build user entity and include the UID
     var user = new User
     {
+        Uid = userRecord.Uid, // ✅ Important: link to FirebaseAuth
         IdNumber = model.IdNumber,
         Name = model.Name,
         Surname = model.Surname,
@@ -44,45 +65,39 @@ namespace VeriWork_Admin.Application.Services
         Gender = model.Gender,
         EmergencyName = model.EmergencyName,
         EmergencyPhone = model.EmergencyPhone,
-        HireDate = model.HireDate, 
+        HireDate = model.HireDate,
         Email = model.Email,
         PasswordHash = hashedPassword,
         Role = model.Role ?? role,
         DepartmentId = model.DepartmentId,
         PhotoUrl = photoUrl,
         Position = model.Position,
-        DocumentUrls = model.DocumentUrls ?? new List<string>()
+        DocumentUrls = model.DocumentUrls ?? new List<string>(),
+        VerificationStatus = "Pending"
     };
 
-    // ✅ Create Firebase Authentication user
-    try
-    {
-        var userRecordArgs = new UserRecordArgs
-        {
-            Email = model.Email,
-            Password = model.Password,
-            DisplayName = $"{model.Name} {model.Surname}",
-            Disabled = false
-        };
+    // 4️⃣ Save user in Firestore using UID as document ID (to match mobile app)
+    var userRef = _db.Collection("Users").Document(user.Uid);
+    await userRef.SetAsync(user);
 
-        await FirebaseAuth.DefaultInstance.CreateUserAsync(userRecordArgs);
-    }
-    catch (FirebaseAuthException ex)
-    {
-        Console.WriteLine($"[Firebase Auth] Error creating user: {ex.Message}");
-        throw new Exception("Failed to create Firebase authentication user.");
-    }
-
-    // ✅ Save user to Firestore "Users" collection
-    await _userRepository.AddUserAsync(user);
-
-    // ✅ If the user is an Admin, also store in "Admins" collection
+    // 5️⃣ Also store Admin users in a separate collection if needed
     if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
     {
-        var adminCollection = _db.Collection("Admins");
-        await adminCollection.Document(user.IdNumber).SetAsync(user);
+        var adminRef = _db.Collection("Admins").Document(user.Uid);
+        await adminRef.SetAsync(user);
     }
+
+    // 6️⃣ Add to repository if needed (depends on your repo implementation)
+    await _userRepository.AddUserAsync(user);
+
+    // 7️⃣ Log audit
+    await _auditLogService.AddLogAsync(
+        "Admin",
+        "Register",
+        $"Registered new user: {user.Name} {user.Surname} ({user.Email})"
+    );
 }
+
 
 
         /// <summary>
