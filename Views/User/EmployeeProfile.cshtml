@@ -26,7 +26,7 @@
 
     <div class="action-buttons">
         <a asp-action="Edit" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">Update/Edit Info</a>
-        <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">Verify Status</a>
+        <a asp-action="ApproveRejectScreen" asp-route-idNumber="@Model.Uid" class="btn-register-employee">Verify Status</a>
     </div>
 
     <div class="info-cards-grid">
@@ -109,7 +109,7 @@
         <p class="popup-text">The employee's profile information will be deleted from the database.</p>
         <div class="popup-actions">
             <form asp-action="DeleteUser" asp-controller="User" method="post">
-                <input type="hidden" name="idNumber" value="@Model.IdNumber" />
+                <input type="hidden" name="idNumber" value="@Model.Uid" />
                 <button type="submit" class="btn-popup btn-popup-confirm">Delete Employee Profile</button>
             </form>
             <button class="btn-popup btn-popup-cancel" id="cancelDeleteButton">Cancel</button>

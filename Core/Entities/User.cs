@@ -98,11 +98,10 @@ public class User
     
     [FirestoreProperty]
     public string VerificationStatus { get; set; } = "Pending";
-    
-    [FirestoreProperty]
-    public string? VerificationNotes { get; set; } 
+
+    [FirestoreProperty] public string VerificationNotes { get; set; } = "Pending";
 
 
-    
-    
+
+
 }

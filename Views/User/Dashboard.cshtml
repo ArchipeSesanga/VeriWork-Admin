@@ -64,9 +64,9 @@
                                 @{
                                     var status = user.VerificationStatus?.ToLower() ?? "pending"; // Default to pending if null
 
-                                    if (status == "verified")
+                                    if (status == "approved" || status == "verified")
                                     {
-                                        <span class="status-tag status-verified">Verified</span>
+                                        <span class="status-tag status-verified">Approved</span>
                                     }
                                     else if (status == "pending")
                                     {
@@ -82,10 +82,15 @@
                                     }
                                 }
                                 
+                                @{
+                                    Console.WriteLine($"DEBUG: VerificationStatus = '{user.VerificationStatus}'");
+                                }
+
+                                
                                 
                             </td>
                             <td>
-                                <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@user.IdNumber" class="btn-view-profile">
+                                <a asp-controller="User" asp-action="EmployeeProfile" asp-route-Uid="@user.Uid" class="btn-view-profile">
                                     View Profile
                                 </a>
                             </td>

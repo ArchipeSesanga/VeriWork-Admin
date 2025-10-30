@@ -20,7 +20,7 @@
     <div>
         <div class="documents-header">
             <h3>Uploaded Documents</h3>
-            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.IdNumber" class="btn-register-employee">
+            <a asp-controller="User" asp-action="EmployeeProfile" asp-route-idNumber="@Model.Uid" class="btn-register-employee">
                 &leftarrow; Back to Profile
             </a>
         </div>
@@ -42,27 +42,36 @@
 
         <!-- APPROVE FORM -->
         <form asp-action="ApproveVerification" asp-controller="User" method="post">
-            <input type="hidden" name="idNumber" value="@Model.IdNumber" />
+            <input type="hidden" name="Uid" value="@Model.Uid" />
             <div class="mb-3">
                 <label for="adminNotes" class="form-label">Administrator Notes</label>
-                <textarea class="form-control" name="reason" id="adminNotes" rows="5" placeholder="Add any relevant notes here..."></textarea>
+                <textarea class="form-control" name="reason" id="adminNotes" rows="5"
+                  placeholder="Add any relevant notes here..."></textarea>
             </div>
             <div class="decision-buttons">
                 <button type="submit" class="btn-decision btn-approve">Approve Employee</button>
             </div>
         </form>
 
+
         <!-- REJECT FORM -->
-        <form asp-action="RejectVerification" asp-controller="User" method="post" class="mt-2">
-            <input type="hidden" name="idNumber" value="@Model.IdNumber" />
+        <form asp-action="RejectVerification" asp-controller="User" method="post" class="mt-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Uid" value="@Model.Uid" />
+
             <div class="mb-3">
                 <label for="rejectNotes" class="form-label">Rejection Notes</label>
-                <textarea class="form-control" name="reason" id="rejectNotes" rows="5" placeholder="Explain why you are rejecting..."></textarea>
+                <textarea class="form-control" name="reason" id="rejectNotes" rows="5"
+                  placeholder="Explain why you are rejecting..."></textarea>
             </div>
+
             <div class="decision-buttons">
-                <button type="submit" class="btn-decision btn-reject">Reject Employee</button>
+                <button type="submit" class="btn-decision btn-reject">
+                    Reject Employee
+                </button>
             </div>
         </form>
+
     </div>
 
 

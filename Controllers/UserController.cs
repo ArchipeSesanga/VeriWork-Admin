@@ -85,17 +85,20 @@ public class UserController : Controller
     public IActionResult SuccessfulRegistration() => View();
     public IActionResult UnSuccessfulRegistration() => View();
 
-    public async Task<IActionResult> EmployeeProfile(string idNumber)
+    [HttpGet]
+    public async Task<IActionResult> EmployeeProfile(string Uid)
     {
-        if (string.IsNullOrEmpty(idNumber))
-            return BadRequest("ID Number is required");
+        if (string.IsNullOrEmpty(Uid))
+            return BadRequest("UID is required");
 
-        var user = await _adminService.GetProfileAsync(idNumber);
+        var user = await _adminService.GetProfileAsync(Uid);
         if (user == null)
-            return NotFound();
+            return NotFound("User not found");
 
         return View(user);
     }
+
+
 
     public async Task<IActionResult> ApproveRejectScreen(string idNumber)
     {
@@ -140,7 +143,8 @@ public class UserController : Controller
             Gender = user.Gender,
             Email = user.Email,
             PhotoUrl = user.PhotoUrl,
-            DocumentUrls = user.DocumentUrls
+            DocumentUrls = user.DocumentUrls,
+            VerificationNotes = user.VerificationNotes,
         };
 
         return View(model);
@@ -229,34 +233,52 @@ public class UserController : Controller
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ApproveVerification(string idNumber)
+    public async Task<IActionResult> ApproveVerification(string Uid, string? reason)
     {
-        var user = await _adminService.GetProfileAsync(idNumber);
-        if (user == null) return NotFound();
+        if (string.IsNullOrEmpty(Uid))
+            return BadRequest("UID is required");
 
-        user.VerificationStatus = "Approved";
+        var user = await _adminService.GetProfileAsync(Uid);
+        if (user == null)
+            return NotFound("User not found");
+
+        user.VerificationStatus = "Approved"; // ✅ Ensure capital A
+        user.VerificationNotes = reason ?? "Approved by admin";
+    
         await _adminService.UpdateProfileAsync(user);
 
-        await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Verification", $"Approved user: {user.Name} {user.Surname}");
+        await _auditLogService.AddLogAsync(
+            User.Identity?.Name ?? "Unknown Admin",
+            "Verification",
+            $"Approved user: {user.Name} {user.Surname}");
 
         TempData["SuccessMessage"] = $"✅ {user.Name}'s verification has been approved.";
-        return RedirectToAction("EmployeeProfile", new { idNumber });
+        return RedirectToAction("EmployeeProfile", new { Uid });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RejectVerification(string idNumber, string reason)
+    public async Task<IActionResult> RejectVerification(string Uid, string reason)
     {
-        var user = await _adminService.GetProfileAsync(idNumber);
-        if (user == null) return NotFound();
+        
+        if (string.IsNullOrEmpty(Uid))
+            return BadRequest("UID is required");
+
+        var user = await _adminService.GetProfileAsync(Uid);
+        if (user == null)
+            return NotFound("User not found");
 
         user.VerificationStatus = "Rejected";
         user.VerificationNotes = reason;
         await _adminService.UpdateProfileAsync(user);
 
-        await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Verification", $"Rejected user: {user.Name} {user.Surname} — Reason: {reason}");
+        await _auditLogService.AddLogAsync(
+            User.Identity?.Name ?? "Unknown Admin",
+            "Verification",
+            $"Rejected user: {user.Name} {user.Surname} — Reason: {reason}");
 
         TempData["ErrorMessage"] = $"❌ {user.Name}'s verification has been rejected.";
-        return RedirectToAction("EmployeeProfile", new { idNumber });
+        return RedirectToAction("EmployeeProfile", new { Uid = user.Uid });
     }
+
 }

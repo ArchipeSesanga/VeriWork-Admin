@@ -24,7 +24,7 @@ namespace VeriWork_Admin.Application.Services
         /// Registers a new user in Firebase Authentication and Firestore.
         /// Admins are also stored in the 'Admins' collection.
         /// </summary>
-     public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
+        public async Task Register(RegistrationModel model, string? photoUrl, string role = "employee")
 {
     // 1️⃣ Hash password for security
     var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
@@ -119,18 +119,19 @@ namespace VeriWork_Admin.Application.Services
         /// <summary>
         /// Retrieves a user profile by ID number.
         /// </summary>
-        public async Task<User?> GetProfileAsync(string idNumber)
+        public async Task<User?> GetProfileAsync(string Uid)
         {
-            return await _userRepository.GetUserByIdAsync(idNumber);
+            var docRef = _db.Collection("Users").Document(Uid);
+            var snapshot = await docRef.GetSnapshotAsync();
+            return snapshot.Exists ? snapshot.ConvertTo<User>() : null;
         }
 
-        /// <summary>
-        /// Updates an existing user profile in the database.
-        /// </summary>
-        public async Task UpdateProfileAsync(User updatedUser)
+        public async Task UpdateProfileAsync(User user)
         {
-            await _userRepository.UpdateUserAsync(updatedUser);
+            var docRef = _db.Collection("Users").Document(user.Uid);
+            await docRef.SetAsync(user, SetOptions.Overwrite);
         }
+
 
         /// <summary>
         /// Fetches all users from the Firestore database.
@@ -167,7 +168,8 @@ namespace VeriWork_Admin.Application.Services
                 HireDate = model.HireDate,
                 PhotoUrl = model.PhotoUrl,
                 DocumentUrls = model.DocumentUrls ?? new List<string>(),
-                VerificationStatus = "Pending"
+                VerificationStatus = "Pending",
+                VerificationNotes = model.VerificationNotes
             };
 
             // ✅ Update in Firestore

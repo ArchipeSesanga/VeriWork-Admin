@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     public async Task AddUserAsync(User user)
     {
         var collection = _db.Collection("Users");
-        await collection.Document(user.IdNumber).SetAsync(user);
+        await collection.Document(user.Uid).SetAsync(user);
     }
 
     public async Task<User> GetUserByEmailAsync(string email)
@@ -59,6 +59,25 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateUserAsync(User updatedUser)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(updatedUser.Uid))
+            throw new ArgumentException("User IdNumber cannot be null or empty.");
+
+        // 🔥 Ensure you are referencing the correct Firestore document
+        var userRef = _db.Collection("Users").Document(updatedUser.Uid);
+        var snapshot = await userRef.GetSnapshotAsync();
+
+        if (!snapshot.Exists)
+            throw new Exception($"User with ID {updatedUser.Uid} not found in Firestore.");
+
+        // ✅ Build update dictionary
+        var updates = new Dictionary<string, object>
+        {
+            { "VerificationStatus", updatedUser.VerificationStatus },
+            { "VerificationNotes", updatedUser.VerificationNotes },
+            { "LastModified", Timestamp.FromDateTime(DateTime.UtcNow) } // optional audit field
+        };
+
+        await userRef.UpdateAsync(updates);
     }
+
 }
