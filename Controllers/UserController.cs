@@ -79,7 +79,7 @@ public class UserController : Controller
         await _auditLogService.AddLogAsync(User.Identity?.Name ?? "Unknown Admin", "Register",
             $"Registered new user: {model.Name} {model.Surname}");
 
-        return RedirectToAction("SuccessfulRegistration");
+        return RedirectToAction("Dashboard");
     }
 
     public IActionResult SuccessfulRegistration() => View();
@@ -202,6 +202,8 @@ public class UserController : Controller
         user.HireDate = model.HireDate ?? user.HireDate;
         user.Gender = model.Gender ?? user.Gender;
         user.Email = model.Email ?? user.Email;
+        user.VerificationNotes = model.VerificationNotes ?? user.VerificationNotes;
+        user.VerificationStatus = model.VerificationStatus ?? user.VerificationStatus;
 
         await userRef.SetAsync(user, SetOptions.Overwrite);
 
@@ -243,7 +245,7 @@ public class UserController : Controller
         if (user == null)
             return NotFound("User not found");
 
-        user.VerificationStatus = "Approved"; // ✅ Ensure capital A
+        user.VerificationStatus = "Approved"; 
         user.VerificationNotes = reason ?? "Approved by admin";
     
         await _adminService.UpdateProfileAsync(user);

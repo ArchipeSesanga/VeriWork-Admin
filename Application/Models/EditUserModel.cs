@@ -23,7 +23,7 @@ public class EditUserModel
     public string Gender { get; set; }
     public string Email { get; set; }
     
-    public string VerifiactionStatus { get; set; }
+    public string VerificationStatus { get; set; }
     public string VerificationNotes { get; set; }
     // For file uploads
     public IFormFile? Photo { get; set; }
