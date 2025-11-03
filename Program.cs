@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Google.Cloud.Firestore;
 using Google.Apis.Auth.OAuth2;
 using FirebaseAdmin;
@@ -49,6 +50,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Auth/Logout";
     });
 
+
+//Microsof.Extensions.Configuration
+var faceConfig = builder.Configuration.GetSection("AzureFace");
+builder.Services.AddHttpClient("AzureFace", client =>
+{
+    var config = builder.Configuration.GetSection("AzureFace");
+    client.BaseAddress = new Uri(config["Endpoint"]);
+    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", config["SubscriptionKey"]);
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+});
+
+builder.Services.AddSingleton<FaceService>();
 
 
 // === MIDDLEWARE ===
