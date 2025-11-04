@@ -1,4 +1,5 @@
 using Google.Cloud.Firestore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VeriWork_Admin.Application.Models;
 using VeriWork_Admin.Application.Services;
@@ -6,6 +7,7 @@ using VeriWork_Admin.Core.Entities;
 
 namespace VeriWork_Admin.Controllers;
 
+[Authorize]
 public class UserController : Controller
 {
     private readonly AdminService _adminService;
