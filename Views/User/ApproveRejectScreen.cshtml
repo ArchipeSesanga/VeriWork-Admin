@@ -1,12 +1,92 @@
-@model VeriWork_Admin.Core.Entities.User
-
 @{
     ViewData["Title"] = "Approve or Reject Employee";
     Layout = "_Layout";
 }
 
+<!-- 
+  I've added this style block to define the new classes for the image preview.
+  This keeps the new layout self-contained within this file, as requested.
+-->
+<style>
+    .document-preview-container {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .document-preview-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    .document-preview-image-wrapper {
+        width: 100%;
+        max-width: 400px; /* You can adjust this max-width */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .document-preview-image {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Re-using the .document-status class you already had */
+    .document-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Re-using the .status-tag and .view-link classes */
+    .status-tag {
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+
+    .status-uploaded {
+        background-color: #e0f2fe; /* light-blue-100 */
+        color: #0c4a6e; /* text-blue-800 */
+    }
+
+    .view-link {
+        color: #0a58ca;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .view-link:hover {
+        text-decoration: underline;
+    }
+
+    /* MODIFICATION:
+      Styles to center the decision buttons 
+      and prevent text wrapping.
+    */
+    .decision-buttons {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .btn-decision {
+        /* This prevents the text inside the button from wrapping */
+        white-space: nowrap;
+    }
+</style>
+
 <div class="verification-page-container" id="mainContent">
     
+    <!-- This profile card section is unchanged -->
     <div class="verification-card profile-card">
         <div class="avatar-container">
             <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Employee Photo" class="avatar-image">
@@ -18,25 +98,38 @@
     </div>
 
     <div>
+        <!-- This header section is unchanged -->
         <div class="documents-header">
             <h3>Uploaded Documents</h3>
             <a asp-controller="User" asp-action="EmployeeProfile" asp-route-Uid="@Model.Uid" class="btn-register-employee">
                 &leftarrow; Back to Profile
             </a>
         </div>
+        
+        <!-- 
+          MODIFICATION: 
+          This card now contains the image preview instead of the <ul>.
+          It uses the new CSS classes defined in the <style> block above.
+        -->
         <div class="verification-card document-list-card">
-            <ul class="document-list">
-                <li class="document-item">
-                    <span>Document Bunch</span>
-                    <div class="document-status">
-                        <span class="status-tag status-uploaded">Uploaded</span>
-                        <a href="#" class="view-link">View</a>
-                    </div>
-                </li>
-            </ul>
+            <div class="document-preview-container">
+                <h4 class="document-preview-title">Uploaded Selfie Preview</h4>
+                <div class="document-preview-image-wrapper">
+                    <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Uploaded Selfie Preview" class="document-preview-image">
+                </div>
+                <div class="document-status">
+                    <span class="status-tag status-uploaded">Uploaded</span>
+                    <!-- This link will open the image in a new tab -->
+                    <a href="@(Model.PhotoUrl ?? "#")" class="view-link" target="_blank" rel="noopener noreferrer">View Full Size</a>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- 
+      This decision card section is mostly unchanged,
+      but I've added the IDs to the buttons to match your JavaScript.
+    -->
     <div class="verification-card decision-card">
         <h3>Final Decision</h3>
 
@@ -49,7 +142,8 @@
                   placeholder="Add any relevant notes here..."></textarea>
             </div>
             <div class="decision-buttons">
-                <button type="submit" class="btn-decision btn-approve">Approve Employee</button>
+                <!-- MODIFICATION: Added id="approveButton" -->
+                <button type="submit" class="btn-decision btn-approve" id="approveButton">Approve Employee</button>
             </div>
         </form>
 
@@ -66,7 +160,8 @@
             </div>
 
             <div class="decision-buttons">
-                <button type="submit" class="btn-decision btn-reject">
+                <!-- MODIFICATION: Added id="rejectButton" -->
+                <button type="submit" class="btn-decision btn-reject" id="rejectButton">
                     Reject Employee
                 </button>
             </div>
@@ -77,13 +172,14 @@
 
 </div>
 
+<!-- This popup overlay section is unchanged -->
 <div class="popup-overlay" id="popupOverlay">
     
     <div class="popup-box" id="approvePopup">
         <div class="popup-icon popup-icon-approve">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-               <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-             </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+              </svg>
         </div>
         <h2 class="popup-title">Employee Approved!</h2>
         <p class="popup-text">The employee's profile has been updated and marked as verified.</p>
@@ -103,6 +199,7 @@
 
 </div>
 
+<!-- This scripts section is unchanged -->
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -127,16 +224,23 @@
             }
 
             // Event listener for the Approve button
-            approveButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default form submission
-                showPopup(approvePopup);
-            });
+            // This will now find the button because we added the ID
+            if (approveButton) {
+                approveButton.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    showPopup(approvePopup);
+                });
+            }
 
             // Event listener for the Reject button
-            rejectButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default form submission
-                showPopup(rejectPopup);
-            });
+            // This will now find the button because we added the ID
+            if (rejectButton) {
+                rejectButton.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    showPopup(rejectPopup);
+                });
+            }
         });
     </script>
 }
+

@@ -232,7 +232,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // ----- Document upload -----
+            // ----- Document upload (Unchanged) -----
             const uploadBtn = document.getElementById('uploadBtn');
             const documentInput = document.getElementById('documentInput');
             const container = document.getElementById('documentUploadContainer');
@@ -255,7 +255,7 @@
                 });
             }
 
-            // ----- Profile photo preview -----
+            // ----- Profile photo preview (Unchanged) -----
             const photoUpload = document.getElementById('photoUpload');
             const avatarPreview = document.getElementById('avatarPreview');
             const avatarPlaceholder = document.getElementById('avatarPlaceholder');
@@ -277,29 +277,61 @@
                 });
             }
 
-            // ----- Form submission overlay logic -----
-            const registerForm = document.getElementById('registerForm');
+            // ----- Form submission overlay logic (MODIFIED) -----
             const overlay = document.getElementById('popupOverlay');
             const mainContent = document.getElementById('mainContent');
+            const $registerForm = $('#registerForm'); // Use jQuery selector
 
-            if (registerForm) {
-                registerForm.addEventListener('submit', function (event) {
-                    // Check if the form is valid
-                    if (registerForm.checkValidity()) {
+            if ($registerForm.length) {
+                // This check ensures jQuery and the validator are loaded.
+                if ($ && $.validator) {
+                    
+                    // Re-parse the form for unobtrusive validation to be safe
+                    $registerForm.removeData("validator");
+                    $registerForm.removeData("unobtrusiveValidation");
+                    $.validator.unobtrusive.parse($registerForm);
 
-                        // ***THIS IS THE FIX***
-                        // Show overlay and blur background as feedback
-                        // We do NOT preventDefault, so the form submits
-                        if(overlay) {
-                            overlay.style.display = 'flex';
-                        }
-                        if(mainContent) {
-                            mainContent.classList.add('blurred');
-                        }
+                    // Get the validator's settings
+                    var validator = $registerForm.data('validator');
+                    if (validator) {
+                        var settings = validator.settings;
+
+                        // Store the original submit handler (if one exists)
+                        const originalSubmitHandler = settings.submitHandler;
+
+                        // This function will run ONLY if the form is VALID
+                        settings.submitHandler = function(form, event) {
+                            // Show overlay and blur background
+                            if (overlay) {
+                                overlay.style.display = 'flex';
+                            }
+                            if (mainContent) {
+                                mainContent.classList.add('blurred');
+                            }
+
+                            // Now, either submit the form directly or call
+                            // the original handler if it existed.
+                            if (originalSubmitHandler) {
+                                originalSubmitHandler.call(this, form, event);
+                            } else {
+                                // No original handler, just submit.
+                                form.submit();
+                            }
+                        };
+
+                        // This function will run if the form is INVALID
+                        settings.invalidHandler = function(event, validator) {
+                            // The form is invalid.
+                            // jQuery Validate has already shown the red error messages.
+                            // We do *nothing* here, so the screen does not blur.
+                            console.log("Form invalid. Submission blocked. No blur.");
+                        };
+                    } else {
+                         console.error("Could not find validator instance on form.");
                     }
-                    // If not valid, browser's HTML5 validation will
-                    // automatically stop the submission.
-                });
+                } else {
+                    console.error("jQuery or jQuery Validate not loaded. Cannot attach popup logic.");
+                }
             }
         });
     </script>
