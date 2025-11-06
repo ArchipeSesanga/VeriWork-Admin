@@ -32,4 +32,5 @@ public class EditUserModel
     // The existing URLs (optional)
     public string? PhotoUrl { get; set; }
     public List<string>? DocumentUrls { get; set; }
+    public string? SelfieUrl {get; set;} 
 }

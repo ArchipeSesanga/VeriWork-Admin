@@ -36,8 +36,6 @@ public class UserController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegistrationModel model, IFormFile photo)
     {
-        // if (!ModelState.IsValid)
-        //     return View(model);
         if (!ModelState.IsValid)
         {
             var errors = ModelState
@@ -88,20 +86,19 @@ public class UserController : Controller
     public IActionResult UnSuccessfulRegistration() => View();
 
     [HttpGet]
-    public async Task<IActionResult> EmployeeProfile(string Uid)
+    public async Task<IActionResult> EmployeeProfile(string uid)
     {
-        if (string.IsNullOrEmpty(Uid))
+        if (string.IsNullOrEmpty(uid))
             return BadRequest("UID is required");
 
-        var user = await _adminService.GetProfileAsync(Uid);
+        var user = await _adminService.GetProfileAsync(uid);
         if (user == null)
             return NotFound("User not found");
 
         return View(user);
     }
 
-
-
+    [HttpGet]
     public async Task<IActionResult> ApproveRejectScreen(string uid)
     {
         if (string.IsNullOrEmpty(uid))
@@ -111,10 +108,22 @@ public class UserController : Controller
         if (user == null)
             return NotFound();
 
-        return View(user);
+        // ✅ Retrieve selfie URL from Firebase Storage
+        string selfieUrl = await _storageService.GetLatestSelfieUrlAsync(uid);
+
+        var model = new EditUserModel
+        {
+            Uid = user.Uid,
+            Name = user.Name,
+            Surname = user.Surname,
+            IdNumber = user.IdNumber,
+            PhotoUrl = user.PhotoUrl,
+            SelfieUrl = selfieUrl // ✅ display this in Razor view
+        };
+
+        return View(model);
     }
 
-    
     [HttpGet]
     public async Task<IActionResult> Edit(string uid)
     {
@@ -152,7 +161,6 @@ public class UserController : Controller
 
         return View(model);
     }
-
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -215,7 +223,7 @@ public class UserController : Controller
         TempData["SuccessMessage"] = "Profile updated successfully!";
         return RedirectToAction("Dashboard");
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteUser(string idNumber)
@@ -235,7 +243,7 @@ public class UserController : Controller
 
         return RedirectToAction("Dashboard");
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ApproveVerification(string Uid, string? reason)
@@ -265,7 +273,6 @@ public class UserController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RejectVerification(string Uid, string reason)
     {
-        
         if (string.IsNullOrEmpty(Uid))
             return BadRequest("UID is required");
 
@@ -285,5 +292,4 @@ public class UserController : Controller
         TempData["ErrorMessage"] = $"❌ {user.Name}'s verification has been rejected.";
         return RedirectToAction("EmployeeProfile", new { Uid = user.Uid });
     }
-
 }

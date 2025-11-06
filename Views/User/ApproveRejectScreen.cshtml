@@ -111,19 +111,42 @@
           This card now contains the image preview instead of the <ul>.
           It uses the new CSS classes defined in the <style> block above.
         -->
-        <div class="verification-card document-list-card">
+        <!-- 🔽 ADD THIS BELOW — Dynamic Selfie Preview -->
+        @{
+            if (!string.IsNullOrEmpty(Model.Uid))
+            {
+                // Base folder for selfies
+                var selfieFolder = $"users/{Model.Uid}/verification_selfies/";
+
+                // The Firebase bucket
+                var bucket = "veriwork-database.firebasestorage.app";
+
+                // If you already know the selfie file name pattern (starts with "selfie_"),
+                // you can use a wildcard-like logic (since Firebase URLs must match exact names).
+                // In production, you'd ideally fetch the exact selfie file name from Firestore.
+                // For now, we assume one selfie exists and build the expected public URL.
+                var selfieFileName = $"selfie_{Model.IdNumber}.jpg"; // fallback (if you stored by ID)
+                var possibleFile = $"selfie_1762337493729.jpg"; // example placeholder
+
+                // Direct public link (replace 'possibleFile' dynamically if known)
+                var selfieUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{Uri.EscapeDataString(selfieFolder + possibleFile)}?alt=media";
+            }
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Uid))
+        {
             <div class="document-preview-container">
-                <h4 class="document-preview-title">Uploaded Selfie Preview</h4>
+                <h4 class="document-preview-title">Verification Selfie</h4>
                 <div class="document-preview-image-wrapper">
-                    <img src="@(Model.PhotoUrl ?? "/images/user_profile.png")" alt="Uploaded Selfie Preview" class="document-preview-image">
+                    <img src="@Model.SelfieUrl" alt="Verification Selfie" class="document-preview-image" />
                 </div>
                 <div class="document-status">
-                    <span class="status-tag status-uploaded">Uploaded</span>
-                    <!-- This link will open the image in a new tab -->
-                    <a href="@(Model.PhotoUrl ?? "#")" class="view-link" target="_blank" rel="noopener noreferrer">View Full Size</a>
+                    <span class="status-tag status -uploaded">Uploaded from Mobile</span>
+                    <a href="@Model.SelfieUrl" class="view-link" target="_blank" rel="noopener noreferrer">View Full Size</a>
                 </div>
             </div>
-        </div>
+        }
+
     </div>
 
     <!-- 
@@ -211,33 +234,40 @@
             const rejectPopup = document.getElementById('rejectPopup');
 
             function showPopup(popupToShow) {
-                // Hide both popups first to reset state
                 approvePopup.style.display = 'none';
                 rejectPopup.style.display = 'none';
-
-                // Show the correct popup
                 popupToShow.style.display = 'block';
-                
-                // Show overlay and blur background
                 overlay.style.display = 'flex';
                 mainContent.classList.add('blurred');
             }
 
-            // Event listener for the Approve button
-            // This will now find the button because we added the ID
+            // ✅ APPROVE BUTTON
             if (approveButton) {
                 approveButton.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent default form submission
+                    event.preventDefault();
+
+                    // Show popup immediately
                     showPopup(approvePopup);
+
+                    // Submit the form shortly after popup appears
+                    setTimeout(() => {
+                        approveButton.closest('form').submit();
+                    }, 1200); // wait ~1.2s to show popup before redirect
                 });
             }
 
-            // Event listener for the Reject button
-            // This will now find the button because we added the ID
+            // ✅ REJECT BUTTON
             if (rejectButton) {
                 rejectButton.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent default form submission
+                    event.preventDefault();
+
+                    // Show popup immediately
                     showPopup(rejectPopup);
+
+                    // Submit the form shortly after popup appears
+                    setTimeout(() => {
+                        rejectButton.closest('form').submit();
+                    }, 1200); // wait ~1.2s
                 });
             }
         });
