@@ -7,7 +7,7 @@ using VeriWork_Admin.Core.Entities;
 
 namespace VeriWork_Admin.Controllers;
 
-[Authorize]
+//[Authorize]
 public class UserController : Controller
 {
     private readonly AdminService _adminService;

@@ -33,15 +33,31 @@ public class UserRepository : IUserRepository
     {
         var users = new List<User>();
         var snapshot = await _db.Collection("Users").GetSnapshotAsync();
+
         foreach (var doc in snapshot.Documents)
         {
-            if (doc.Exists)
+            if (!doc.Exists)
+                continue;
+
+            try
             {
-                Console.WriteLine($"Doc {doc.Id}: {doc.ToDictionary()}");
                 var user = doc.ConvertTo<User>();
+
+                // 🔥 VERY IMPORTANT: Set UID from document ID
+                user.Uid = doc.Id;
+
                 users.Add(user);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error converting document {doc.Id}");
+                Console.WriteLine(ex.Message);
+
+                // Skip bad document instead of crashing dashboard
+                continue;
+            }
         }
+
         return users;
     }
 
